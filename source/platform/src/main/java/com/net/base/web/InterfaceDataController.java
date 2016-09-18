@@ -78,7 +78,7 @@ public class InterfaceDataController {
 		return transformData(deviceManagerDao.getAllPhoneOwnerInfo(null));
 	}
 	
-	//3    3插入定位数据
+	/*//3    3插入定位数据
 	@RequestMapping(value="/insertPositionData.do",method=RequestMethod.POST)
 	@ResponseBody
 	public String insertPositionData(int deviceId,String dataList){
@@ -100,7 +100,27 @@ public class InterfaceDataController {
 		}
 		faceDataManagerDao.insertFaceData(deviceId, dataList);
 	}		
-
+*/
+	//3    3插入定位数据and内差数据      单条数据
+	@RequestMapping(value="/insertPositionData.do",method=RequestMethod.POST)
+	@ResponseBody
+	public void insertPositionData(int deviceId,String dataList){
+		logger.info("data: *****   "+deviceId+"*****"+dataList);
+		/*if(deviceId < 0)return "";
+		if (dataList.endsWith(";")) {
+			dataList = dataList.substring(0,dataList.length()-1);
+		}*/
+		try {
+			if(dataList.length() < 0)return;
+			positionManagerDao.insertPositionData(deviceId, dataList);
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+		
+	}
+	
+	
+	
 	//4,	输入设备ID 获得所有具有此设备报警通知的机主信息。
 	@ResponseBody
 	@RequestMapping("/getPhoneOwnerByDevId.do")

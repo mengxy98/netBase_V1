@@ -22,4 +22,19 @@ public class TransData {
 		return returnMap;
 		
 	}
+	
+	public static Map<String,String> transData(String[] mess,String[] column){
+		Map<String,String> returnMap = new HashMap<String, String>();
+		for (int i = 0; i < column.length; i++) {
+			try {
+				returnMap.put(column[i], mess[i]);
+			} catch (Exception e) {
+				returnMap.put(column[i],null);
+			}
+		}
+		String createDate = new SimpleDateFormat("YYYYMMdd").format(new Date());
+		returnMap.put("createTime", createDate);
+		return returnMap;
+		
+	}
 }
