@@ -219,17 +219,29 @@ function getDataList() {
 									},{
 										"data" : "temperature",
 										"render" : function(data, type, full,meta) {// 渲染，修改数据的展现形式
-											return "<p style='text-align:left'>"+ data + "</p>";
+											if(data == null){
+												return "<p style='text-align:left'>&nbsp;</p>";
+											}else{
+												return "<p style='text-align:left'>"+ data + "</p>";
+											}
 										}
 									},{
 										"data" : "angle",
 										"render" : function(data, type, full,meta) {// 渲染，修改数据的展现形式
-											return "<p style='text-align:left'>"+ data + "</p>";
+											if(data == null){
+												return "<p style='text-align:left'>&nbsp;</p>";
+											}else{
+												return "<p style='text-align:left'>"+ data + "</p>";
+											}
 										}
 									},{
 										"data" : "sensor",
 										"render" : function(data, type, full,meta) {// 渲染，修改数据的展现形式
-											return "<p style='text-align:left'>"+ data + "</p>";
+											if(data == null){
+												return "<p style='text-align:left'>&nbsp;</p>";
+											}else{
+												return "<p style='text-align:left'>"+ data + "</p>";
+											}
 										}
 									},{
 										"data" : "imageAddress",
@@ -239,7 +251,11 @@ function getDataList() {
 									},{
 										"data" : "serverTime",
 										"render" : function(data, type, full,meta) {// 渲染，修改数据的展现形式
-											return "<p style='text-align:left'>"+ data + "</p>";
+											if(data == null){
+												return "<p style='text-align:left'>&nbsp;</p>";
+											}else{
+												return "<p style='text-align:left'>"+ data + "</p>";
+											}
 										}
 									},{
 										"data" : "isValid",

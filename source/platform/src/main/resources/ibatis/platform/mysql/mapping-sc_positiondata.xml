@@ -160,7 +160,7 @@
 				#angle#,
 				#sensor#,
 				#imageAddress#,
-				#serverTime#,
+				SYSDATE(),
 				#isValid#
 			)
 		  <selectKey resultClass="java.lang.Integer" keyProperty="id" >
@@ -202,7 +202,7 @@
 			angle=#angle#,
 			sensor=#sensor#,
 			imageAddress=#imageAddress#,
-			serverTime=#serverTime#,
+			serverTime=SYSDATE(),
 			isValid=#isValid#
 	where id=#id#
 	</update>
