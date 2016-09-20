@@ -37,6 +37,7 @@ public class FunType {
 	public final static String SINGLE_MANAGER = "表层单点数据管理";
 	
 	public final static String ALTER_MANAGER = "报警数据管理";
+	public final static String FACE_MANAGER = "表层数据管理";
 	
 
 }

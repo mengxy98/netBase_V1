@@ -119,57 +119,101 @@ function getDataList() {
 										"data" : "rownum",
 										"orderable" : false,
 										"render" : function(data, type, full,meta) {// 渲染，修改数据的展现形式
-											return "<p style='text-align:center'>"+ data + "</p>";
+											if(data == null){
+												return "<p style='text-align:left'>&nbsp;</p>";
+											}else{
+												return "<p style='text-align:left'>"+ data + "</p>";
+											}
 										}
 									},{
 										"data" : "taskName",
 										"render" : function(data, type, full,meta) {// 渲染，修改数据的展现形式
-											return "<p style='text-align:left'>"+ data + "</p>";
+											if(data == null){
+												return "<p style='text-align:left'>&nbsp;</p>";
+											}else{
+												return "<p style='text-align:left'>"+ data + "</p>";
+											}
 										}
 									},{
 										"data" : "deviceName",
 										"render" : function(data, type, full,meta) {// 渲染，修改数据的展现形式
-											return "<p style='text-align:left'>"+ data + "</p>";
+											if(data == null){
+												return "<p style='text-align:left'>&nbsp;</p>";
+											}else{
+												return "<p style='text-align:left'>"+ data + "</p>";
+											}
 										}
 									},{
 										"data" : "longitude",
 										"render" : function(data, type, full,meta) {// 渲染，修改数据的展现形式
-											return "<p style='text-align:left'>"+ data + "</p>";
+											if(data == null){
+												return "<p style='text-align:left'>&nbsp;</p>";
+											}else{
+												return "<p style='text-align:left'>"+ data + "</p>";
+											}
 										}
 									},{
 										"data" : "latitude",
 										"render" : function(data, type, full,meta) {// 渲染，修改数据的展现形式
-											return "<p style='text-align:left'>"+ data + "</p>";
+											if(data == null){
+												return "<p style='text-align:left'>&nbsp;</p>";
+											}else{
+												return "<p style='text-align:left'>"+ data + "</p>";
+											}
 										}
 									},{
 										"data" : "elevation",
 										"render" : function(data, type, full,meta) {// 渲染，修改数据的展现形式
-											return "<p style='text-align:left'>"+ data + "</p>";
+											if(data == null){
+												return "<p style='text-align:left'>&nbsp;</p>";
+											}else{
+												return "<p style='text-align:left'>"+ data + "</p>";
+											}
 										}
 									},{
 										"data" : "X",
 										"render" : function(data, type, full,meta) {// 渲染，修改数据的展现形式
-											return "<p style='text-align:left'>"+ data + "</p>";
+											if(data == null){
+												return "<p style='text-align:left'>&nbsp;</p>";
+											}else{
+												return "<p style='text-align:left'>"+ data + "</p>";
+											}
 										}
 									},{
 										"data" : "Y",
 										"render" : function(data, type, full,meta) {// 渲染，修改数据的展现形式
-											return "<p style='text-align:left'>"+ data + "</p>";
+											if(data == null){
+												return "<p style='text-align:left'>&nbsp;</p>";
+											}else{
+												return "<p style='text-align:left'>"+ data + "</p>";
+											}
 										}
 									},{
 										"data" : "Z",
 										"render" : function(data, type, full,meta) {// 渲染，修改数据的展现形式
-											return "<p style='text-align:left'>"+ data + "</p>";
+											if(data == null){
+												return "<p style='text-align:left'>&nbsp;</p>";
+											}else{
+												return "<p style='text-align:left'>"+ data + "</p>";
+											}
 										}
 									},{
 										"data" : "speed",
 										"render" : function(data, type, full,meta) {// 渲染，修改数据的展现形式
-											return "<p style='text-align:left'>"+ data + "</p>";
+											if(data == null){
+												return "<p style='text-align:left'>&nbsp;</p>";
+											}else{
+												return "<p style='text-align:left'>"+ data + "</p>";
+											}
 										}
 									},{
 										"data" : "satelliteTime",
 										"render" : function(data, type, full,meta) {// 渲染，修改数据的展现形式
-											return "<p style='text-align:left'>"+ data + "</p>";
+											if(data == null){
+												return "<p style='text-align:left'>&nbsp;</p>";
+											}else{
+												return "<p style='text-align:left'>"+ data + "</p>";
+											}
 										}
 									},{
 										"data" : "direction",
@@ -179,42 +223,74 @@ function getDataList() {
 									},{
 										"data" : "GPSStatus",
 										"render" : function(data, type, full,meta) {// 渲染，修改数据的展现形式
-											return "<p style='text-align:left'>"+ data + "</p>";
+											if(data == null){
+												return "<p style='text-align:left'>&nbsp;</p>";
+											}else{
+												return "<p style='text-align:left'>"+ data + "</p>";
+											}
 										}
 									},{
 										"data" : "compactId",
 										"render" : function(data, type, full,meta) {// 渲染，修改数据的展现形式
-											return "<p style='text-align:left'>"+ data + "</p>";
+											if(data == null){
+												return "<p style='text-align:left'>&nbsp;</p>";
+											}else{
+												return "<p style='text-align:left'>"+ data + "</p>";
+											}
 										}
 									},{
 										"data" : "CMV",
 										"render" : function(data, type, full,meta) {// 渲染，修改数据的展现形式
-											return "<p style='text-align:left'>"+ data + "</p>";
+											if(data == null){
+												return "<p style='text-align:left'>&nbsp;</p>";
+											}else{
+												return "<p style='text-align:left'>"+ data + "</p>";
+											}
 										}
 									},{
 										"data" : "RMV",
 										"render" : function(data, type, full,meta) {// 渲染，修改数据的展现形式
-											return "<p style='text-align:left'>"+ data + "</p>";
+											if(data == null){
+												return "<p style='text-align:left'>&nbsp;</p>";
+											}else{
+												return "<p style='text-align:left'>"+ data + "</p>";
+											}
 										}
 									},{
 										"data" : "frequency",
 										"render" : function(data, type, full,meta) {// 渲染，修改数据的展现形式
-											return "<p style='text-align:left'>"+ data + "</p>";
+											if(data == null){
+												return "<p style='text-align:left'>&nbsp;</p>";
+											}else{
+												return "<p style='text-align:left'>"+ data + "</p>";
+											}
 										}
 									},{
 										"data" : "F1",
 										"render" : function(data, type, full,meta) {// 渲染，修改数据的展现形式
-											return "<p style='text-align:left'>"+ data + "</p>";
+											if(data == null){
+												return "<p style='text-align:left'>&nbsp;</p>";
+											}else{
+												return "<p style='text-align:left'>"+ data + "</p>";
+											}
 										}
 									},{
 										"data" : "F2",
 										"render" : function(data, type, full,meta) {// 渲染，修改数据的展现形式
-											return "<p style='text-align:left'>"+ data + "</p>";
+											if(data == null){
+												return "<p style='text-align:left'>&nbsp;</p>";
+											}else{
+												return "<p style='text-align:left'>"+ data + "</p>";
+											}
 										}
 									},{
 										"data" : "F3",
 										"render" : function(data, type, full,meta) {// 渲染，修改数据的展现形式
-											return "<p style='text-align:left'>"+ data + "</p>";
+											if(data == null){
+												return "<p style='text-align:left'>&nbsp;</p>";
+											}else{
+												return "<p style='text-align:left'>"+ data + "</p>";
+											}
 										}
 									},{
 										"data" : "temperature",
@@ -246,7 +322,11 @@ function getDataList() {
 									},{
 										"data" : "imageAddress",
 										"render" : function(data, type, full,meta) {// 渲染，修改数据的展现形式
-											return "<p style='text-align:left'>"+ data + "</p>";
+											if(data == null){
+												return "<p style='text-align:left'>&nbsp;</p>";
+											}else{
+												return "<p style='text-align:left'>"+ data + "</p>";
+											}
 										}
 									},{
 										"data" : "serverTime",

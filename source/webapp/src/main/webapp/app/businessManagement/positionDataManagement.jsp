@@ -132,8 +132,8 @@
 	                                            <table  id="datatable_col_reorder_roleManagement" class="table table-striped table-bordered table-hover">
 	                                                <thead>
 	                                             	 <tr>
-		                                                 <th style="width:4%;"></th>
-		                                                 <th style="vertical-align: middle;width:5%;" data-class="expand" >序号</th>                                                        	
+		                                                 <th style="width:2%;"></th>
+		                                                 <th style="vertical-align: middle;width:2%;" data-class="expand" >序号</th>                                                        	
 		                                                 <th style="vertical-align: middle;"data-class="phone">任务</th>
 		                                                 <th style="vertical-align: middle;"data-hide="phone" >设备</th>
 		                                                 <th style="vertical-align: middle;"data-hide="phone" >经度</th>

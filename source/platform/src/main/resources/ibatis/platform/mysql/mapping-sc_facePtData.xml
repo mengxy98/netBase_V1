@@ -11,19 +11,14 @@
 					t.speed,
 					t.CMV,
 					t.RMV,
-					t.frequency,
 					t.divNum,
-					t.deviceid,
+					t.deviceId,
 					t.thickness,
 					t.positionId,
 					if(ISNULL(tsk.taskName),"",tsk.taskName) as taskName,
 					if(ISNULL(dev.deviceName),"",dev.deviceName) as deviceName,
 					t.taskId,
 					t.isValid,
-					t.temperature,
-					t.angle,
-					t.sensor,
-					t.imageAddress,
 					(@rownum := @rownum + 1) as rownum
 				from 
 					(select @rownum := 0 from DUAL) r,
@@ -145,7 +140,6 @@
 			speed=#speed#,
 			CMV=#CMV#,
 			RMV=#RMV#,
-			frequency=#frequency#,
 			isValid=#isValid#
 	where   taskId=#taskId# and
 			deviceId=#deviceId# and

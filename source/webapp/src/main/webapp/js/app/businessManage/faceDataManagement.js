@@ -84,7 +84,7 @@ function getDataList() {
 							"serverSide" : true,
 							"autoWidth" : true,
 							"ajax" : {
-								url : Main.contextPath+ "/singleManagermentController/getDataList.do",
+								url : Main.contextPath+ "/faceManagermentController/getDataList.do",
 								type: 'POST',
 								data : function(d) {
 									return $.extend({},d,{
@@ -119,12 +119,20 @@ function getDataList() {
 										"data" : "rownum",
 										"orderable" : false,
 										"render" : function(data, type, full,meta) {// 渲染，修改数据的展现形式
-											return "<p style='text-align:center'>"+ data + "</p>";
+											if(data == null){
+												return "<p style='text-align:left'>&nbsp;</p>";
+											}else{
+												return "<p style='text-align:left'>"+ data + "</p>";
+											}
 										}
 									},{
 										"data" : "taskName",
 										"render" : function(data, type, full,meta) {// 渲染，修改数据的展现形式
-											return "<p style='text-align:left'>"+ data + "</p>";
+											if(data == null){
+												return "<p style='text-align:left'>&nbsp;</p>";
+											}else{
+												return "<p style='text-align:left'>"+ data + "</p>";
+											}
 										}
 									},{
 										"data" : "deviceName",
@@ -134,12 +142,20 @@ function getDataList() {
 									},{
 										"data" : "X",
 										"render" : function(data, type, full,meta) {// 渲染，修改数据的展现形式
-											return "<p style='text-align:left'>"+ data + "</p>";
+											if(data == null){
+												return "<p style='text-align:left'>&nbsp;</p>";
+											}else{
+												return "<p style='text-align:left'>"+ data + "</p>";
+											}
 										}
 									},{
 										"data" : "Y",
 										"render" : function(data, type, full,meta) {// 渲染，修改数据的展现形式
-											return "<p style='text-align:left'>"+ data + "</p>";
+											if(data == null){
+												return "<p style='text-align:left'>&nbsp;</p>";
+											}else{
+												return "<p style='text-align:left'>"+ data + "</p>";
+											}
 										}
 									},{
 										"data" : "Z",
@@ -149,42 +165,29 @@ function getDataList() {
 									},{
 										"data" : "speed",
 										"render" : function(data, type, full,meta) {// 渲染，修改数据的展现形式
-											return "<p style='text-align:left'>"+ data + "</p>";
+											if(data == null){
+												return "<p style='text-align:left'>&nbsp;</p>";
+											}else{
+												return "<p style='text-align:left'>"+ data + "</p>";
+											}
 										}
 									},{
 										"data" : "CMV",
 										"render" : function(data, type, full,meta) {// 渲染，修改数据的展现形式
-											return "<p style='text-align:left'>"+ data + "</p>";
+											if(data == null){
+												return "<p style='text-align:left'>&nbsp;</p>";
+											}else{
+												return "<p style='text-align:left'>"+ data + "</p>";
+											}
 										}
 									},{
 										"data" : "RMV",
 										"render" : function(data, type, full,meta) {// 渲染，修改数据的展现形式
-											return "<p style='text-align:left'>"+ data + "</p>";
-										}
-									},{
-										"data" : "frequency",
-										"render" : function(data, type, full,meta) {// 渲染，修改数据的展现形式
-											return "<p style='text-align:left'>"+ data + "</p>";
-										}
-									},{
-										"data" : "temperature",
-										"render" : function(data, type, full,meta) {// 渲染，修改数据的展现形式
-											return "<p style='text-align:left'>"+ data + "</p>";
-										}
-									},{
-										"data" : "angle",
-										"render" : function(data, type, full,meta) {// 渲染，修改数据的展现形式
-											return "<p style='text-align:left'>"+ data + "</p>";
-										}
-									},{
-										"data" : "sensor",
-										"render" : function(data, type, full,meta) {// 渲染，修改数据的展现形式
-											return "<p style='text-align:left'>"+ data + "</p>";
-										}
-									},{
-										"data" : "imageAddress",
-										"render" : function(data, type, full,meta) {// 渲染，修改数据的展现形式
-											return "<p style='text-align:left'>"+ data + "</p>";
+											if(data == null){
+												return "<p style='text-align:left'>&nbsp;</p>";
+											}else{
+												return "<p style='text-align:left'>"+ data + "</p>";
+											}
 										}
 									},{
 										"data" : "isValid",
@@ -194,17 +197,29 @@ function getDataList() {
 									},{
 										"data" : "thickness",
 										"render" : function(data, type, full,meta) {// 渲染，修改数据的展现形式
-											return "<p style='text-align:left'>"+ data + "</p>";
+											if(data == null){
+												return "<p style='text-align:left'>&nbsp;</p>";
+											}else{
+												return "<p style='text-align:left'>"+ data + "</p>";
+											}
 										}
 									},{
 										"data" : "times",
 										"render" : function(data, type, full,meta) {// 渲染，修改数据的展现形式
-											return "<p style='text-align:left'>"+ data + "</p>";
+											if(data == null){
+												return "<p style='text-align:left'>&nbsp;</p>";
+											}else{
+												return "<p style='text-align:left'>"+ data + "</p>";
+											}
 										}
 									},{
 										"data" : "divNum",
 										"render" : function(data, type, full,meta) {// 渲染，修改数据的展现形式
-											return "<p style='text-align:left'>"+ data + "</p>";
+											if(data == null){
+												return "<p style='text-align:left'>&nbsp;</p>";
+											}else{
+												return "<p style='text-align:left'>"+ data + "</p>";
+											}
 										}
 									}
 							],
@@ -270,11 +285,6 @@ function addData(){
 	var speed = $("#contianerDetailAdd #speed").val().trim();
 	var CMV = $("#contianerDetailAdd #CMV").val().trim();
 	var RMV = $("#contianerDetailAdd #RMV").val().trim();
-	var frequency = $("#contianerDetailAdd #frequency").val().trim();
-	var temperature = $("#contianerDetailAdd #temperature").val().trim();
-	var angle = $("#contianerDetailAdd #angle").val().trim();
-	var sensor = $("#contianerDetailAdd #sensor").val().trim();
-	var imageAddress = $("#contianerDetailAdd #imageAddress").val().trim();
 	var isValid = $("#contianerDetailAdd #isValid").val();
 	var thickness = $("#contianerDetailAdd #thickness").val().trim();
 	var times = $("#contianerDetailAdd #times").val().trim();
@@ -288,11 +298,6 @@ function addData(){
 		'speed':speed,
 		'CMV':CMV,
 		'RMV':RMV,
-		'frequency':frequency,
-		'temperature':temperature,
-		'angle':angle,
-		'sensor':sensor,
-		'imageAddress':imageAddress,
 		'isValid':isValid,
 		'times':times,
 		'divNum':divNum,
@@ -304,7 +309,7 @@ function addData(){
 	   alert("请选择 设备!");
    }else{	 
 	   $.ajax({
-			url : Main.contextPath+"/singleManagermentController/addData.do",
+			url : Main.contextPath+"/faceManagermentController/addData.do",
 			type : "post",
 			data:{params:params},
 			dataType : "json",
@@ -327,7 +332,7 @@ function deleteData(){
 		if(confirm('确定要删除该单点数据吗?')){
 			var id = datas[0].id;
 			$.ajax({                     
-				url : Main.contextPath+"/singleManagermentController/deleteData.do",
+				url : Main.contextPath+"/faceManagermentController/deleteData.do",
 				type : "post",
 				data:{id:id},
 				dataType : "json",
@@ -358,14 +363,9 @@ function modifyData(){
         $("#contianerDetailRevise #speed").val(datas[0].speed);
         $("#contianerDetailRevise #CMV").val(datas[0].CMV);
         $("#contianerDetailRevise #RMV").val(datas[0].RMV);
-        $("#contianerDetailRevise #frequency").val(datas[0].frequency);
         $("#contianerDetailRevise #times").val(datas[0].times);
         $("#contianerDetailRevise #divNum").val(datas[0].divNum);
         $("#contianerDetailRevise #thickness").val(datas[0].thickness);
-        $("#contianerDetailRevise #temperature").val(datas[0].temperature);
-        $("#contianerDetailRevise #angle").val(datas[0].angle);
-        $("#contianerDetailRevise #sensor").val(datas[0].sensor);
-        $("#contianerDetailRevise #imageAddress").val(datas[0].imageAddress);
         $("#contianerDetailRevise #isValid").val(datas[0].isValid);
 		
 		$("#proDiolagAdd").hide();
@@ -384,14 +384,9 @@ function saveModify(){
 	var speed = $("#contianerDetailRevise #speed").val().trim();
 	var CMV = $("#contianerDetailRevise #CMV").val().trim();
 	var RMV = $("#contianerDetailRevise #RMV").val().trim();
-	var frequency = $("#contianerDetailRevise #frequency").val().trim();
 	var times = $("#contianerDetailRevise #times").val().trim();
 	var divNum = $("#contianerDetailRevise #divNum").val().trim();
 	var thickness = $("#contianerDetailRevise #thickness").val().trim();
-	var temperature = $("#contianerDetailRevise #temperature").val().trim();
-	var angle = $("#contianerDetailRevise #angle").val().trim();
-	var sensor = $("#contianerDetailRevise #sensor").val().trim();
-	var imageAddress = $("#contianerDetailRevise #imageAddress").val().trim();
 	var isValid = $("#contianerDetailRevise #isValid").val();
 	var params = JSON.stringify([{
 		"id":modifyId,
@@ -403,11 +398,6 @@ function saveModify(){
 		'speed':speed,
 		'CMV':CMV,
 		'RMV':RMV,
-		'frequency':frequency,
-		'temperature':temperature,
-		'angle':angle,
-		'sensor':sensor,
-		'imageAddress':imageAddress,
 		'isValid':isValid,
 		'times':times,
 		'divNum':divNum,
@@ -419,7 +409,7 @@ function saveModify(){
 	   alert("请选择 设备!");
    }else{	 
 	   $.ajax({
-			url : Main.contextPath+"/singleManagermentController/modifyData.do",
+			url : Main.contextPath+"/faceManagermentController/modifyData.do",
 			type : "post",
 			data:{params:params},
 			dataType : "json",

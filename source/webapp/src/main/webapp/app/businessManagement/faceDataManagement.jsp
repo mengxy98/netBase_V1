@@ -86,7 +86,7 @@
         <div style="position: relative;">
 				<ol class="breadcrumb">
 					<li>业务管理</li>
-					<li>单点数据管理</li>
+					<li>表层数据管理</li>
 				</ol>
 			</div>
         <section id="widget-grid" class="">
@@ -142,11 +142,6 @@
 		                                                 <th style="vertical-align: middle;"data-hide="phone" >速度</th>
 		                                                 <th style="vertical-align: middle" data-hide="phone,tablet">CMV</th>      
 		                                                 <th style="vertical-align: middle" data-hide="phone,tablet">RMV</th>  
-		                                                 <th style="vertical-align: middle" data-hide="phone,tablet">频率</th>  
-		                                                 <th style="vertical-align: middle" data-hide="phone,tablet">温度</th>     
-		                                                 <th style="vertical-align: middle" data-hide="phone,tablet">角度</th>     
-		                                                 <th style="vertical-align: middle" data-hide="phone,tablet">传感器</th>     
-		                                                 <th style="vertical-align: middle" data-hide="phone,tablet">图像地址</th>     
 		                                                 <th style="vertical-align: middle" data-hide="phone,tablet">数据壮态</th>   
 		                                                 <th style="vertical-align: middle" data-hide="phone,tablet">厚度</th>     
 		                                                 <th style="vertical-align: middle" data-hide="phone,tablet">遍数</th>     
@@ -230,36 +225,6 @@
 					<p style="overflow:hidden;width:100%;">
 						<span style="float:left;width:18%;text-align:right">RMV：</span>
 						<input id="RMV" style="float:left;width:52%" type="text" />
-					</p>
-				</li>
-				<li  style="min-height:25px;margin-bottom:10px">
-					<p style="overflow:hidden;width:100%;">
-						<span style="float:left;width:18%;text-align:right">频率：</span>
-						<input id="frequency" style="float:left;width:52%" type="text" />
-					</p>
-				</li>
-				<li  style="min-height:25px;margin-bottom:10px">
-					<p style="overflow:hidden;width:100%;">
-						<span style="float:left;width:18%;text-align:right">温度：</span>
-						<input id="temperature" style="float:left;width:52%" type="text" />
-					</p>
-				</li>
-				<li  style="min-height:25px;margin-bottom:10px">
-					<p style="overflow:hidden;width:100%;">
-						<span style="float:left;width:18%;text-align:right">角度：</span>
-						<input id="angle" style="float:left;width:52%" type="text" />
-					</p>
-				</li>
-				<li  style="min-height:25px;margin-bottom:10px">
-					<p style="overflow:hidden;width:100%;">
-						<span style="float:left;width:18%;text-align:right">传感器：</span>
-						<input id="sensor" style="float:left;width:52%" type="text" />
-					</p>
-				</li>
-				<li  style="min-height:25px;margin-bottom:10px">
-					<p style="overflow:hidden;width:100%;">
-						<span style="float:left;width:18%;text-align:right">图像地址：</span>
-						<input id="imageAddress" style="float:left;width:52%" type="text" />
 					</p>
 				</li>
 				<li  style="min-height:25px;margin-bottom:10px">
@@ -368,36 +333,6 @@
 					<p style="overflow:hidden;width:100%;">
 						<span style="float:left;width:18%;text-align:right">RMV：</span>
 						<input id="RMV" style="float:left;width:52%" type="text" />
-					</p>
-				</li>
-				<li  style="min-height:25px;margin-bottom:10px">
-					<p style="overflow:hidden;width:100%;">
-						<span style="float:left;width:18%;text-align:right">频率：</span>
-						<input id="frequency" style="float:left;width:52%" type="text" />
-					</p>
-				</li>
-				<li  style="min-height:25px;margin-bottom:10px">
-					<p style="overflow:hidden;width:100%;">
-						<span style="float:left;width:18%;text-align:right">温度：</span>
-						<input id="temperature" style="float:left;width:52%" type="text" />
-					</p>
-				</li>
-				<li  style="min-height:25px;margin-bottom:10px">
-					<p style="overflow:hidden;width:100%;">
-						<span style="float:left;width:18%;text-align:right">角度：</span>
-						<input id="angle" style="float:left;width:52%" type="text" />
-					</p>
-				</li>
-				<li  style="min-height:25px;margin-bottom:10px">
-					<p style="overflow:hidden;width:100%;">
-						<span style="float:left;width:18%;text-align:right">传感器：</span>
-						<input id="sensor" style="float:left;width:52%" type="text" />
-					</p>
-				</li>
-				<li  style="min-height:25px;margin-bottom:10px">
-					<p style="overflow:hidden;width:100%;">
-						<span style="float:left;width:18%;text-align:right">图像地址：</span>
-						<input id="imageAddress" style="float:left;width:52%" type="text" />
 					</p>
 				</li>
 				<li  style="min-height:25px;margin-bottom:10px">

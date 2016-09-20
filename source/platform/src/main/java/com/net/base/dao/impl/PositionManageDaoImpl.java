@@ -134,6 +134,7 @@ public class PositionManageDaoImpl implements PositionManagerDao {
 					try {
 						param2.clear();
 						param2.put("positionId", keyId);
+						param2.put("taskId", originData[0]);
 						param2.put("deviceId", originData[1]);
 						param2.put("X", preX+emp[0]);
 						param2.put("Y", preY+emp[1]);

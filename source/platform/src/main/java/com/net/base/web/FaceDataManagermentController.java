@@ -20,20 +20,20 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.net.base.annotation.FunType;
 import com.net.base.annotation.LogComponent;
 import com.net.base.annotation.LogMethod;
-import com.net.base.dao.SingleManagerDao;
+import com.net.base.dao.FaceDataManagerDao;
 import com.net.base.util.JsonUtils;
 import com.net.base.util.ListPageUtils;
 
-@LogComponent(description="单点数据管理",funcType=FunType.SINGLE_MANAGER)
+@LogComponent(description="表层数据管理",funcType=FunType.FACE_MANAGER)
 @Controller
 @RequestMapping("/faceManagermentController")
 public class FaceDataManagermentController {
 	Logger logger = LoggerFactory.getLogger(this.getClass());
 	
 	@Autowired
-	SingleManagerDao singleManagerDao;
+	FaceDataManagerDao faceDataManagerDao;
 	
-	@LogMethod(description="查询单点数据",funcType=FunType.SINGLE_MANAGER)
+	@LogMethod(description="查询表层数据",funcType=FunType.FACE_MANAGER)
 	@ResponseBody
 	@RequestMapping("/getDataList.do")
 	public Map<String,Object> getDataList(HttpServletRequest request, String taskName,String deviceName) {
@@ -41,7 +41,7 @@ public class FaceDataManagermentController {
 		map.put("taskName", taskName);
 		map.put("deviceName", deviceName);
 		Map<String, Object> returnMap = new HashMap<String, Object>();
-		Integer count = singleManagerDao.findMainDataListCount(map);
+		Integer count = faceDataManagerDao.findMainDataListCount(map);
 		returnMap.put("recordsTotal", count);
 		if(map.get("start")!=null){
 			returnMap.put("recordsFiltered", count);
@@ -50,7 +50,7 @@ public class FaceDataManagermentController {
 		}
 		List<Map<String,Object>> list = new ArrayList<Map<String,Object>>();
 		if (count != null && count > 0) {
-			list = singleManagerDao.findMainDataList(map);
+			list = faceDataManagerDao.findMainDataList(map);
 			returnMap.put("data", list);
 		}else{
 			returnMap.put("data", list);
@@ -59,7 +59,7 @@ public class FaceDataManagermentController {
 	}
 	
 	
-	@LogMethod(description="添加单点数据",funcType=FunType.SINGLE_MANAGER)
+	@LogMethod(description="添加表层数据",funcType=FunType.FACE_MANAGER)
 	@RequestMapping("/addData.do")
 	@ResponseBody
 	public Map<String,Object> addData(HttpServletRequest request,@RequestParam String params) {
@@ -69,7 +69,7 @@ public class FaceDataManagermentController {
 		param.put("createTime", createDate);
 		Map<String, Object> returnMap = new HashMap<String, Object>();
 		try {
-			singleManagerDao.addMainData(param);
+			faceDataManagerDao.addMainData(param);
 			returnMap.put("msg", "添加成功");
 		} catch (Exception e) {
 			logger.error(e.getMessage());
@@ -79,14 +79,14 @@ public class FaceDataManagermentController {
 	}
 	
 	
-	@LogMethod(description="删除单点数据",funcType=FunType.SINGLE_MANAGER)
+	@LogMethod(description="删除表层数据",funcType=FunType.FACE_MANAGER)
 	@RequestMapping("/deleteData.do")
 	@ResponseBody
 	public Map<String,Object> deleteData(HttpServletRequest request, String id) {
 		Map<String, Object> returnMap = new HashMap<String, Object>();
 		if(id !=null){
 			try {
-				singleManagerDao.deleteMainData(id);
+				faceDataManagerDao.deleteMainData(id);
 				returnMap.put("msg", "删除成功");
 			} catch (Exception e) {
 				logger.error(e.getMessage());
@@ -99,7 +99,7 @@ public class FaceDataManagermentController {
 	}
 	
 	
-	@LogMethod(description="修改单点数据",funcType=FunType.SINGLE_MANAGER)
+	@LogMethod(description="修改表层数据",funcType=FunType.FACE_MANAGER)
 	@RequestMapping("/modifyData.do")
 	@ResponseBody
 	public Map<String,Object> modifyData(HttpServletRequest request,@RequestParam String params) {
@@ -107,7 +107,7 @@ public class FaceDataManagermentController {
 		Map<String, String> param = para.get(0);
 		Map<String, Object> returnMap = new HashMap<String, Object>();
 		try {
-			singleManagerDao.modefyMainData(param);
+			faceDataManagerDao.modefyMainData(param);
 			returnMap.put("msg", "修改成功");
 		} catch (Exception e) {
 			logger.error(e.getMessage());
