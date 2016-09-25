@@ -16,10 +16,4 @@
 	</select>
 	
 	
-	<!-- 查询机构字典表 -->
-	<select id="findSqlData" resultClass="java.util.HashMap" parameterClass="java.lang.String">
-				<!--   select * from ($sql$) u   -->
-				$sql$
-	</select>
-	
 </sqlMap>
