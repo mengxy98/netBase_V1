@@ -197,7 +197,7 @@ function getDataList() {
 									},{
 										"data" : "thickness",
 										"render" : function(data, type, full,meta) {// 渲染，修改数据的展现形式
-											if(data == null){
+											if(data == null || data < 1){
 												return "<p style='text-align:left'>&nbsp;</p>";
 											}else{
 												return "<p style='text-align:left'>"+ data + "</p>";
@@ -206,7 +206,7 @@ function getDataList() {
 									},{
 										"data" : "times",
 										"render" : function(data, type, full,meta) {// 渲染，修改数据的展现形式
-											if(data == null){
+											if(data == null  || data < 1){
 												return "<p style='text-align:left'>&nbsp;</p>";
 											}else{
 												return "<p style='text-align:left'>"+ data + "</p>";
@@ -215,7 +215,7 @@ function getDataList() {
 									},{
 										"data" : "divNum",
 										"render" : function(data, type, full,meta) {// 渲染，修改数据的展现形式
-											if(data == null){
+											if(data == null  || data < 1){
 												return "<p style='text-align:left'>&nbsp;</p>";
 											}else{
 												return "<p style='text-align:left'>"+ data + "</p>";

@@ -99,7 +99,6 @@
 				#positionId#
 			)
 		on DUPLICATE key UPDATE 
-			divNum=divNum+1,
 			positionId=#positionId#,		
 			thickness=#thickness#,
 			times=times+1,
@@ -107,9 +106,9 @@
 			speed=#speed#,
 			CMV=#CMV#,
 			RMV=#RMV#
-		<selectKey resultClass="java.lang.Integer" keyProperty="id" >
+		<!-- <selectKey resultClass="java.lang.Integer" >
       		SELECT LAST_INSERT_ID()
-    	</selectKey>
+    	</selectKey> -->
 	</insert>
 	
 		<insert id="addProcessData" parameterClass="java.util.Map">

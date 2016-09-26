@@ -142,14 +142,16 @@ public class PositionManageDaoImpl implements PositionManagerDao {
 						param2.put("CMV", originData[13]);
 						param2.put("RMV", originData[14]);
 						param2.put("speed", originData[8]);
-						param2.put("divNum", emp[2]);
-						param2.put("thickness", "1");
+						param2.put("times", emp[2]);
+						param2.put("divNum", null);
+						param2.put("thickness", null);
 						param2.put("isValid", "1");
 						//表层数据表
-						Object faceId = basicDao.insert("sc_facePtData.addData",param2);
-						//过程数据对应表层点表 
-						param2.put("RPId",""+faceId);
-						basicDao.insert("sc_facePtData.addProcessData",param2);
+						/*Object faceId = basicDao.insert("sc_facePtData.addData",param2);*/
+						 basicDao.insert("sc_facePtData.addData",param2);
+						//过程数据对应表层点表  由于这里的faceId不准确，现在改成触发器去执行
+						/*param2.put("RPId",""+faceId);
+						basicDao.insert("sc_facePtData.addProcessData",param2);*/
 					} catch (Exception e1) {
 						logger.error("neichaData--->>>******"+e1.getMessage());
 					}	
