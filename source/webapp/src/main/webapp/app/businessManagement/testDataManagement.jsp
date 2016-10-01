@@ -112,7 +112,7 @@
                                     <div class="row" style="padding-top: 1%;padding-left:1%;padding-bottom:0.5%;">                                               
                                         <form class="form-inline">
 	                                          <div class="form-group"  style="margin-right:1.5em">
-	                                               	<textarea id="mysql" rows="8" cols="150">select * from sc_dic</textarea>
+	                                               	<textarea id="mysql" rows="8" cols="150">select * from sc_dic limit 0,20</textarea>
 	                                          </div> 
 	                                          <div class="form-group">
 	                                                <button type="button" class="btn btn-primary" id="search" onclick="queryFun()">
