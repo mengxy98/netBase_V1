@@ -97,11 +97,19 @@
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>default</servlet-name>
-		<url-pattern>/app/disHtml/public/js/*</url-pattern>
+		<url-pattern>/app/surface/data/*</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>default</servlet-name>
-		<url-pattern>/app/disHtml/data/json/*</url-pattern>
+		<url-pattern>/app/surface/js/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>default</servlet-name>
+		<url-pattern>/app/surface/public/js/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>default</servlet-name>
+		<url-pattern>/app/surface/public/img/*</url-pattern>
 	</servlet-mapping>
 	
 	<servlet-mapping>

@@ -206,6 +206,52 @@
 			isValid=#isValid#
 	where id=#id#
 	</update>
+	
+	<select id="getSinglePositionList" parameterClass="java.util.Map" resultClass="java.util.HashMap">
+	   			select 
+					t.id,
+					t.taskId,
+					t.deviceId,
+					t.longitude,
+					t.latitude,
+					t.elevation,
+					t.X,
+					t.Y,
+					t.Z,
+					t.speed,
+					DATE_FORMAT(t.satelliteTime, '%Y-%m-%d %H:%i:%s') as satelliteTime,
+					t.direction,
+					t.GPSStatus,
+					t.compactId,
+					t.CMV,
+					t.RMV,
+					t.frequency,
+					t.F1,
+					t.F2,
+					t.F3,
+					DATE_FORMAT(t.serverTime, '%Y-%m-%d %H:%i:%s') as serverTime
+				from 
+					sc_positiondata t
+				where 1=1
+					and t.isValid=1
+					<isNotEmpty prepend="and" property="taskId">
+						t.taskId=#taskId#
+					</isNotEmpty>	
+					<isNotEmpty prepend="and" property="deviceId">
+						t.deviceId=#deviceId#
+					</isNotEmpty>	
+					<isNotEmpty prepend="and" property="positionId">
+						t.id > #positionId#
+					</isNotEmpty>	
+					<isNotEmpty prepend="and" property="startTime">
+						<isNotEmpty property="endTime">
+							t.serverTime between #startTime# and #endTime#
+						</isNotEmpty>
+					</isNotEmpty>	
+					order by serverTime asc
+ 					limit 1
+	</select>
+	
 </sqlMap>
 				  
 				  
