@@ -48,6 +48,43 @@
 				</isNotEmpty>
 	</select>
 	
+	<select id="findTaskDeviceList" parameterClass="java.util.Map" resultClass="java.util.HashMap">
+	   	select * from (
+	   			select DISTINCT t2.id as taskId,t2.taskName,t1.id as deviceId,t1.deviceName
+				 from 
+						sc_device t1,
+						sc_taskdeviceref ref,
+						sc_task t2
+					 where  1=1
+				            and t1.id = ref.devid
+							and t2.id = ref.tid
+				<isNotEmpty prepend="and" property="taskName">
+					t2.taskName like '%$taskName$%'
+				</isNotEmpty>
+				<isNotEmpty prepend="and" property="deviceName">
+					t1.deviceName like '%$deviceName$%'
+				</isNotEmpty>
+				<isNotEmpty prepend="and" property="beginStNum">
+					t2.beginStNum=#beginStNum#
+				</isNotEmpty>
+				<isNotEmpty prepend="and" property="endStNum">
+					t2.endStNum=#$endStNum#
+				</isNotEmpty>
+				    ORDER BY ref.allocationTime desc
+				) c
+				GROUP BY c.deviceId
+	</select>
+	
+	
+	<select id="getDeviceId" parameterClass="java.util.Map" resultClass="java.lang.Integer">
+	    select  t1.id
+				from sc_device t1
+				where 1=1
+				<isNotEmpty prepend="and" property="deviceName">
+					t1.deviceName like '%$deviceName$%'
+				</isNotEmpty>
+	</select>
+	
 	
 	<insert id="addDevice" parameterClass="java.util.Map">
 	   insert INTO sc_device(

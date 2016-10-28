@@ -125,7 +125,8 @@ public class PositionManageDaoImpl implements PositionManagerDao {
 					 "F1","F2","F3","temperature","angle","sensor","imageAddress","serverTime"};
 			Map<String, String> param = TransData.transData(originData,column);
 			param.put("isValid", "1");
-			Object keyId = basicDao.insert("sc_positiondata.addData",param);
+			basicDao.insert("sc_positiondata.addData",param);
+			Object keyId = basicDao.queryForObject("sc_positiondata.findMaxId");
 			//插入内插数据  ,xml还带着更新，所以不做批量操作
 			Map<String, Object> param2 = new HashMap<String, Object>();
 			for (int i = 0; i < neichaData.length; i++) {
@@ -136,8 +137,10 @@ public class PositionManageDaoImpl implements PositionManagerDao {
 						param2.put("positionId", keyId);
 						param2.put("taskId", originData[0]);
 						param2.put("deviceId", originData[1]);
-						param2.put("X", preX+emp[0]);
-						param2.put("Y", preY+emp[1]);
+						Double xx = Double.parseDouble(preX)+Double.parseDouble(emp[0]);
+						param2.put("X", xx);
+						Double yy = Double.parseDouble(preY)+Double.parseDouble(emp[1]);
+						param2.put("Y", yy);
 						param2.put("Z", originData[7]);
 						param2.put("CMV", originData[13]);
 						param2.put("RMV", originData[14]);

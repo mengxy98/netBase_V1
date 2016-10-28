@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import net.sf.json.JSONArray;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.net.base.dao.BasicDao;
 import com.net.base.dao.DeviceManagerDao;
 import com.net.base.dao.FaceDataManagerDao;
 import com.net.base.dao.LineManagerDao;
@@ -47,6 +49,65 @@ public class InterfaceDataController {
 	
 	@Autowired
 	FaceDataManagerDao faceDataManagerDao;
+	
+	@Resource
+	BasicDao<?> basicDao;
+	/**
+	 * 下面是20161020之后添加的数据接口
+	 */
+	
+	@RequestMapping(value="/getPositionDataByTime.do")
+	@ResponseBody
+	public String getPositionDataByTime(String startDT,String endDT){
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("startDT", startDT);
+		map.put("endDT", endDT);
+		String data = basicDao.queryForObject("sc_positiondata.findDataInterface",map);
+		if (data == null) {
+			return "";	
+		}
+		return transformData(data);		
+	}
+
+	
+	@RequestMapping(value="/getRangePtDataByPid.do")
+	@ResponseBody
+	public String getRangePtDataByPid(String Pid){
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("positionId", Pid);
+		String data = basicDao.queryForObject("sc_facePtData.findDataInterface",map);
+		if (data == null) {
+			return "";	
+		}
+		return transformData(data);				
+	}
+	
+	//多定位的内差数据
+	@RequestMapping(value="/getRangePtDataByPids.do")
+	@ResponseBody
+	public String getRangePtDataByPids(String Pid){
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("positionId", Pid);
+		String data = basicDao.queryForObject("sc_facePtData.findMoreDataInterface",map);
+		if (data == null) {
+			return "";	
+		}
+		return transformData(data);				
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	/**
+	 * 下面的是之前要添加的数据接口
+	 * @param request
+	 * @return
+	 */
 	
 	/*1，	获得所有设备信息：
 	2，	获得所有手机机主信息：

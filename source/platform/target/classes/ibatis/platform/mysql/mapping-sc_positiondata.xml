@@ -70,6 +70,16 @@
 					</isNotEmpty>
 				</isNotEmpty>
 	</select> 
+	
+	
+	
+	 <select id="findDataInterface" parameterClass="java.util.Map" resultClass="java.lang.String">
+	   			select 
+				GROUP_CONCAT(CONCAT('[',CONCAT_Ws(',',t.id,t.deviceId,t.CMV,t.frequency,1,t.satelliteTime,t.GPSStatus,t.speed,t.elevation,t.Y,t.X),']')) as pd
+			     from 
+					sc_positiondata t
+				where t.satelliteTime BETWEEN #startDT# and #endDT#
+	</select> 
 		
 	<select id="findDataListCount" parameterClass="java.util.Map" resultClass="java.lang.Integer">
 	    	 select 
@@ -160,7 +170,7 @@
 				#angle#,
 				#sensor#,
 				#imageAddress#,
-				#serverTime#,
+				SYSDATE(),
 				#isValid#
 			)
 		  <selectKey resultClass="java.lang.Integer" keyProperty="id" >
@@ -169,7 +179,7 @@
 	</insert>
 	
 	<select id="findMaxId" resultClass="java.lang.Integer">
-		SELECT LAST_INSERT_ID();
+		SELECT max(id) FROM sc_positiondata;
 	</select>
 	
 	<delete id="deleteData" parameterClass="java.lang.String">
@@ -202,10 +212,116 @@
 			angle=#angle#,
 			sensor=#sensor#,
 			imageAddress=#imageAddress#,
-			serverTime=#serverTime#,
+			serverTime=SYSDATE(),
 			isValid=#isValid#
 	where id=#id#
 	</update>
+	
+	<select id="getSinglePositionList" parameterClass="java.util.Map" resultClass="java.util.HashMap">
+	   			select 
+					t.id,
+					t.taskId,
+					t.deviceId,
+					t.longitude,
+					t.latitude,
+					t.elevation,
+					t.X,
+					t.Y,
+					t.Z,
+					t.speed,
+					DATE_FORMAT(t.satelliteTime, '%Y-%m-%d %H:%i:%s') as satelliteTime,
+					t.direction,
+					t.GPSStatus,
+					t.compactId,
+					t.CMV,
+					t.RMV,
+					t.frequency,
+					t.F1,
+					t.F2,
+					t.F3,
+					DATE_FORMAT(t.serverTime, '%Y-%m-%d %H:%i:%s') as serverTime
+				from 
+					sc_positiondata t
+				where 1=1
+					and t.isValid=1
+					<isNotEmpty prepend="and" property="taskId">
+						t.taskId=#taskId#
+					</isNotEmpty>	
+					<isNotEmpty prepend="and" property="deviceId">
+						t.deviceId=#deviceId#
+					</isNotEmpty>	
+					<isNotEmpty prepend="and" property="positionId">
+						t.id > #positionId#
+					</isNotEmpty>	
+					<isNotEmpty prepend="and" property="startTime">
+						<isNotEmpty property="endTime">
+							t.serverTime between #startTime# and #endTime#
+						</isNotEmpty>
+					</isNotEmpty>	
+					order by serverTime asc
+ 					limit 0,1
+	</select>
+	
+	
+	<select id="getSinglePositionListNew" parameterClass="java.util.Map" resultClass="java.util.HashMap">
+	   			select 
+					t.id,
+					t.taskId,
+					t.deviceId,
+					t.longitude,
+					t.latitude,
+					t.elevation,
+					t.X,
+					t.Y,
+					t.Z,
+					t.speed,
+					DATE_FORMAT(t.satelliteTime, '%Y-%m-%d %H:%i:%s') as satelliteTime,
+					t.direction,
+					t.GPSStatus,
+					t.compactId,
+					t.CMV,
+					t.RMV,
+					t.frequency,
+					t.F1,
+					t.F2,
+					t.F3,
+					DATE_FORMAT(t.serverTime, '%Y-%m-%d %H:%i:%s') as serverTime
+				from 
+					sc_positiondata t
+				where 1=1
+					and t.isValid=1
+					<isNotEmpty prepend="and" property="taskIds">
+						t.taskId in ($taskIds$)
+					</isNotEmpty>	
+					<isNotEmpty prepend="and" property="deviceIds">
+						t.deviceId in ($deviceIds$)
+					</isNotEmpty>	
+					<isNotEmpty prepend="and" property="serverTime">
+						t.serverTime = #serverTime#
+					</isNotEmpty>	
+	</select>
+	
+	<select id="getPositionTimeList" parameterClass="java.util.Map" resultClass="java.util.HashMap">
+	   			select 
+					DATE_FORMAT(t.serverTime, '%Y-%m-%d %H:%i:%s') as serverTime
+				from 
+					sc_positiondata t
+				where 1=1
+					and t.isValid=1
+					<isNotEmpty prepend="and" property="taskIds">
+						t.taskId in ($taskIds$)
+					</isNotEmpty>	
+					<isNotEmpty prepend="and" property="deviceIds">
+						t.deviceId in ($deviceIds$)
+					</isNotEmpty>	
+					<isNotEmpty prepend="and" property="startTime">
+						<isNotEmpty property="endTime">
+							t.serverTime between #startTime# and #endTime#
+						</isNotEmpty>
+					</isNotEmpty>	
+					order by serverTime asc
+	</select>
+	
 </sqlMap>
 				  
 				  

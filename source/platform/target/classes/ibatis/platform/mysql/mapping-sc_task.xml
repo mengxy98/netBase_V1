@@ -73,6 +73,22 @@
 				where 1=1 and t.sid=sg.sid
 				order by t.id desc
 	</select>
+	
+	<select id="getTaskInfo" parameterClass="java.util.Map" resultClass="java.lang.String">
+	   			select 
+	   			  GROUP_CONCAT(DISTINCT t.id) as id
+				from sc_task t
+				where 1=1
+				<isNotEmpty prepend="and" property="taskName">
+					t.taskName = #taskName#
+				</isNotEmpty>
+				<isNotEmpty prepend="and" property="beginStNum">
+					t.beginStNum = #beginStNum#
+				</isNotEmpty>
+				<isNotEmpty prepend="and" property="endStNum">
+					t.endStNum = #endStNum#
+				</isNotEmpty>
+	</select>
 		
 	<select id="findDataListCount" parameterClass="java.util.Map" resultClass="java.lang.Integer">
 	    SELECT count(1) FROM sc_task

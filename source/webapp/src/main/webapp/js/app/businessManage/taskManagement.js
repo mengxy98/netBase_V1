@@ -107,6 +107,12 @@ function getDataList() {
 											return "<p style='text-align:center'>"+ data + "</p>";
 										}
 									},{
+										"data" : "id",
+										"orderable" : false,
+										"render" : function(data, type, full,meta) {// 渲染，修改数据的展现形式
+											return "<p style='text-align:center'>"+ data + "</p>";
+										}
+									},{
 										"data" : "taskName",
 										"render" : function(data, type, full,meta) {// 渲染，修改数据的展现形式
 											return "<p style='text-align:left'>"+ data + "</p>";

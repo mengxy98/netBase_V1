@@ -48,6 +48,41 @@
 					</isNotEmpty>
 				</isNotEmpty>
 	</select> 
+	
+	
+	 <select id="findDataInterface" parameterClass="java.util.Map" resultClass="java.lang.String">
+	   			select 
+	   			GROUP_CONCAT(CONCAT('[',CONCAT_Ws(',',t.X,t.Y),']')) as pd
+				from 
+					sc_rangeptdata t
+				where positionId=#positionId#
+	</select> 
+	
+	<select id="findMoreDataInterface" parameterClass="java.util.Map" resultClass="java.lang.String">
+	   select GROUP_CONCAT(tt.rd) as pd from (
+			select CONCAT('(',positionId,',',GROUP_CONCAT(CONCAT('[',t.X,',',t.Y,']')),')') as rd
+				from 
+					sc_rangeptdata t
+				where positionId in ($positionId$)
+				GROUP BY positionId
+		) tt
+	</select> 
+	
+	<select id="findPositionNeicha" parameterClass="java.util.Map" resultClass="java.util.HashMap">
+	   		select 
+	   			t.id,
+					FORMAT(t.X%#precision#,1) as X,
+					FORMAT(t.Y%#precision#,1) as Y,
+					FORMAT(t.times,1) as times 
+				from 
+					sc_rangeptdata t
+			    where 1=1
+				and t.isValid=1
+				<isNotEmpty prepend="and" property="positionId">
+					t.positionId =#positionId#
+				</isNotEmpty>
+				ORDER BY id asc
+	</select> 
 		
 	<select id="findDataListCount" parameterClass="java.util.Map" resultClass="java.lang.Integer">
 	    	 select 

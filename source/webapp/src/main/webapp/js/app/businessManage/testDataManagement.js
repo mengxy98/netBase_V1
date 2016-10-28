@@ -9,7 +9,6 @@ function queryFun(){
 		return false;
 	}
 	$("#dispalyData").text("");
-	//$("#loadingRoleManagent").attr("style","display:block");
 	$.ajax({
 		url : Main.contextPath+"/dicManagermentController/querySql.do",
 		type : "post",
@@ -17,11 +16,34 @@ function queryFun(){
 		dataType : "json",
 		data:{sql:sql},
 		success : function(result) {
-		//	$("#loadingRoleManagent").attr("style","display:none");
-		//	window.parent.existsUser(result);//判断用户是否已失效
-			$.each(result,function(index,map){
-				$("#dispalyData").append(JSON.stringify(map)+"   <br>");
-			});
+			if(result.code=='200'){
+				if(result.data.length==0){
+					$("#dispalyData").html("<b>无数据</b>");
+				}else{
+					var html = "<table class='gridtable'>";
+					html+="<tr>";
+					$.each(result.head,function(index,str){
+						html+="<th>"+str+"</th>";
+					});
+					html+="</tr>";
+					$.each(result.data,function(index,map){
+						html+="<tr>";
+						for(var key in map){
+							html+="<td>"+map[key]+"</td>";
+						}
+						html+="</tr>";
+					});
+					html += "</table>";
+					$("#dispalyData").html(html);
+				}
+			}else{
+				alert(result.mess);
+			}
+			
 		}
 	});
 }
+
+
+
+

@@ -129,7 +129,8 @@
 	                                                <thead>
 	                                             	 <tr>
 		                                                 <th style="width:4%;"></th>
-		                                                 <th style="vertical-align: middle;width:5%;" data-class="expand" >序号</th>                                                        	
+		                                                 <th style="vertical-align: middle;width:5%;" data-class="expand" >序号</th>  
+		                                                 <th style="vertical-align: middle;"data-class="phone">任务ID</th>                                                      	
 		                                                 <th style="vertical-align: middle;"data-class="phone">任务名称</th>
 		                                                 <th style="vertical-align: middle;"data-hide="phone" >标段</th>
 		                                                 <th style="vertical-align: middle;"data-hide="phone" >振动遍数</th>

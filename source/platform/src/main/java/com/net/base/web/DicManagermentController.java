@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.sql.DataSource;
@@ -60,13 +61,180 @@ public class DicManagermentController {
 	
 	@ResponseBody
 	@RequestMapping("/querySql.do")
-	public List<Map<String,Object>> querySql(HttpServletRequest request) {
+	public Map<String,Object> querySql(HttpServletRequest request) {
+		Map<String,Object> returnMap=new HashMap<String, Object>();
 		String sql = request.getParameter("sql");//获取字典类型的数据
-		if (null == sql || sql.length() == 0) return null; //禁止获取全部的字典数据
+		if (null == sql || sql.length() == 0){
+			returnMap.put("code", 400);
+			returnMap.put("mess", "请输入有效的sql");
+			return returnMap;
+		}
+		sql = sql.toUpperCase();
+		if (sql.indexOf("DROP")>0 || sql.indexOf("ALTER")>0){
+			returnMap.put("code", 401);
+			returnMap.put("mess", "亲，只能查询(select),增加(insert),修改(update),删除(delete)操作哦!");
+			return returnMap;
+		}
 		List<Map<String,Object>> result = find(sql);
-		return result;
+		if (result.size() > 0) {
+			returnMap.put("data", result);
+			returnMap.put("code", 200);
+			returnMap.put("mess", "查询成功");	
+			Map<String,Object> singleData = result.get(0); 
+			Set<String> keys = singleData.keySet();
+			returnMap.put("head", keys);	
+		}else{
+			returnMap.put("data", new ArrayList<Map<String,Object>>());
+			returnMap.put("code", 200);
+			returnMap.put("mess", "无数据");	
+		}
+		return returnMap;
 	}
 	
+	
+	@ResponseBody
+	@RequestMapping("/querySqlNew.do")
+	public String querySqlNew(HttpServletRequest request) {
+		String sql = request.getParameter("sql");//获取字典类型的数据
+		String type = request.getParameter("type");//获取字典类型的      数据需要包装的type=0，直接执行sql的type=1
+		sql = sql.trim();
+		if (null == sql || sql.length() == 0){
+			return "请输入有效的sql";
+		}
+		sql = sql.toUpperCase();
+		if (sql.indexOf("DROP")>0 || sql.indexOf("ALTER")>0){
+			return "亲，只能查询(select),增加(insert),修改(update),删除(delete)操作哦!";
+		}
+		if (sql.endsWith(";"))sql=sql.substring(0,sql.length()-1); 
+		//处理sql,判断sql是不是select语句，要是select语句，进行sql包装，不是就直接执行，为了避免sql之中套有select语句
+		String executeSql = "";
+		if ("0".equals(type)) {
+			String newSQl =sql.substring(7,sql.indexOf("FROM"));
+			executeSql = "SELECT GROUP_CONCAT(CONCAT('[',CONCAT_Ws(',',"+newSQl+"),']')) AS RETURNDATA "+sql.substring(sql.indexOf("FROM"));
+		}else if ("1".equals(type)) {
+			executeSql = sql;
+		}else {
+			return "";
+		}
+		String result = findStringData(executeSql);
+		if (null != result) {
+			//System.out.println(result.length());
+			return result;
+		}
+		return "";
+	}
+	
+	/*private String findStringData(String executeSql,Object... objects) {
+		StringBuffer bfBuffer = new StringBuffer();
+		Clob returnDate = null;
+		Connection con = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		try
+		{
+			con = dataSource.getConnection();
+			ps = con.prepareStatement(executeSql);
+			for ( int i = 0; i < objects.length; i++ )
+			{
+				ps.setObject(i + 1, objects[i]);
+			}
+			rs = ps.executeQuery();
+	
+			if ( rs.next() )
+			{
+				returnDate = rs.getClob(1);
+			}
+	
+		}
+		catch ( SQLException e )
+		{
+			e.printStackTrace();
+		} finally
+		{
+	
+			try
+			{
+				if ( null != rs )
+					rs.close();
+				if ( null != ps )
+					ps.close();
+				if ( null != con )
+					con.close();
+			}
+			catch ( SQLException e )
+			{
+				e.printStackTrace();
+			}
+		}
+		BufferedReader br = null;
+		try {
+			br = new BufferedReader(returnDate.getCharacterStream());
+			String strLine;
+			while((strLine = br.readLine()) != null){
+				bfBuffer.append(strLine);
+			} 
+			return bfBuffer.toString();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}finally{
+			try {
+				if (br != null) {
+					br.close();
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return "";
+	}*/
+	
+	
+	private String findStringData(String executeSql,Object... objects) {
+		String returnDate = "";
+		Connection con = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		try
+		{
+			con = dataSource.getConnection();
+			ps = con.prepareStatement(executeSql);
+			for ( int i = 0; i < objects.length; i++ )
+			{
+				ps.setObject(i + 1, objects[i]);
+			}
+			rs = ps.executeQuery();
+	
+			if ( rs.next() )
+			{
+				returnDate = rs.getString(1);
+			}
+	
+		}
+		catch ( SQLException e )
+		{
+			e.printStackTrace();
+		} finally
+		{
+	
+			try
+			{
+				if ( null != rs )
+					rs.close();
+				if ( null != ps )
+					ps.close();
+				if ( null != con )
+					con.close();
+			}
+			catch ( SQLException e )
+			{
+				e.printStackTrace();
+			}
+		}
+		return returnDate;
+	}
+
 	protected List<Map<String, Object>> find(String sql, Object... objects) {
 
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

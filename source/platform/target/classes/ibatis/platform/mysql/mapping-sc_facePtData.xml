@@ -11,19 +11,14 @@
 					t.speed,
 					t.CMV,
 					t.RMV,
-					t.frequency,
 					t.divNum,
-					t.deviceid,
+					t.deviceId,
 					t.thickness,
 					t.positionId,
 					if(ISNULL(tsk.taskName),"",tsk.taskName) as taskName,
 					if(ISNULL(dev.deviceName),"",dev.deviceName) as deviceName,
 					t.taskId,
 					t.isValid,
-					t.temperature,
-					t.angle,
-					t.sensor,
-					t.imageAddress,
 					(@rownum := @rownum + 1) as rownum
 				from 
 					(select @rownum := 0 from DUAL) r,
@@ -52,6 +47,41 @@
 						#size#
 					</isNotEmpty>
 				</isNotEmpty>
+	</select> 
+	
+	
+	 <select id="findDataInterface" parameterClass="java.util.Map" resultClass="java.lang.String">
+	   			select 
+	   			GROUP_CONCAT(CONCAT('[',CONCAT_Ws(',',t.X,t.Y),']')) as pd
+				from 
+					sc_rangeptdata t
+				where positionId=#positionId#
+	</select> 
+	
+	<select id="findMoreDataInterface" parameterClass="java.util.Map" resultClass="java.lang.String">
+	   select GROUP_CONCAT(tt.rd) as pd from (
+			select CONCAT('(',positionId,',',GROUP_CONCAT(CONCAT('[',t.X,',',t.Y,']')),')') as rd
+				from 
+					sc_rangeptdata t
+				where positionId in ($positionId$)
+				GROUP BY positionId
+		) tt
+	</select> 
+	
+	<select id="findPositionNeicha" parameterClass="java.util.Map" resultClass="java.util.HashMap">
+	   		select 
+	   			t.id,
+					FORMAT(t.X%#precision#,1) as X,
+					FORMAT(t.Y%#precision#,1) as Y,
+					FORMAT(t.times,1) as times 
+				from 
+					sc_rangeptdata t
+			    where 1=1
+				and t.isValid=1
+				<isNotEmpty prepend="and" property="positionId">
+					t.positionId =#positionId#
+				</isNotEmpty>
+				ORDER BY id asc
 	</select> 
 		
 	<select id="findDataListCount" parameterClass="java.util.Map" resultClass="java.lang.Integer">
@@ -104,7 +134,6 @@
 				#positionId#
 			)
 		on DUPLICATE key UPDATE 
-			divNum=divNum+1,
 			positionId=#positionId#,		
 			thickness=#thickness#,
 			times=times+1,
@@ -112,9 +141,9 @@
 			speed=#speed#,
 			CMV=#CMV#,
 			RMV=#RMV#
-		<selectKey resultClass="java.lang.Integer" keyProperty="id" >
+		<!-- <selectKey resultClass="java.lang.Integer" >
       		SELECT LAST_INSERT_ID()
-    	</selectKey>
+    	</selectKey> -->
 	</insert>
 	
 		<insert id="addProcessData" parameterClass="java.util.Map">
@@ -145,7 +174,6 @@
 			speed=#speed#,
 			CMV=#CMV#,
 			RMV=#RMV#,
-			frequency=#frequency#,
 			isValid=#isValid#
 	where   taskId=#taskId# and
 			deviceId=#deviceId# and
