@@ -145,7 +145,8 @@ public class PositionManageDaoImpl implements PositionManagerDao {
 						param2.put("CMV", originData[13]);
 						param2.put("RMV", originData[14]);
 						param2.put("speed", originData[8]);
-						param2.put("times", emp[2]);
+						//param2.put("times", emp[2]);
+						param2.put("times", 1);
 						param2.put("divNum", null);
 						param2.put("thickness", null);
 						param2.put("isValid", "1");
