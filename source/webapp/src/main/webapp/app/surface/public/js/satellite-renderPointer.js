@@ -29,6 +29,10 @@
 	
 	var tmpCanvas = null;
 	
+    var carlist="";
+    var targetCmv=10;
+
+
     //是否支持canvas
     function isCanvasSupported(){
         var elem = document.createElement('canvas');
@@ -249,7 +253,7 @@
         //    colorList: options.colorList ? options.colorList : [[255,215,0],[255,0,0],[0,255,0],[0,0,255],[0,255,255],[255,224,0],[255,0,0],[42,255,0]],//rgb颜色
                     //  colorList: options.colorList ? options.colorList : [[255,215,0],[255,0,0],[0,255,0],[0,0,255],[0,255,255],[255,224,0],[255,0,0],[42,255,0]],//rgb颜色
            colorList: options.colorList ? options.colorList : [[255,255,0],[228,219,27],[205,205,50],[188,188,67],[190,143,65],[203,64,52],[255,85,85],[255,0,0],[191,255,191],[117,255,117],[0,255,0]],//rgb颜色
-          
+           cmvallcolorList:options.cmvallcolorList ? options.cmvallcolorList : [[255,255,0],[228,219,27],[205,205,50],[188,188,67],[190,143,65],[203,64,52],[255,85,85],[255,0,0],[191,255,191],[117,255,117],[0,255,0]],//rgb颜色
            cmvcolorList: options.cmvcolorList ? options.cmvcolorList : [[255,255,0],[0,255,0]],//rgb颜色
           
             rate : options.rate === undefined ? 5 : options.rate,//1像素点对应多少厘米，也就是说5cm*5cm填充一个像素点 10*10 填充 2*2 两像素
@@ -266,7 +270,7 @@
                 src:'./img/nsew.jpg',
                 width:40,
                 height:40,
-                right:160
+                right:200
             },
             adjustDeviceId:'device#1',
             device:{
@@ -357,7 +361,7 @@
     Satellite.prototype = {
         constructor:Satellite,
         init:function(){
-            if(!this.panel){
+       if(!this.panel){
                 throw new Error('panel是必须的字段');
             }
 
@@ -367,8 +371,8 @@
             //添加标段层
             this.addSegmentLayer();
             //添加中线、边线层
-            this.addMachineLineLayer();
-
+            //this.addMachineLineLayer();
+            
             this.panel.appendChild(this.container);
 
             if(this.configs.isAutoPlay){
@@ -376,10 +380,11 @@
             }
 
             this.initDrag();
-        },
+         },
         
         initSegmentData:function(data){
         
+        //victor 2016.10.12 每次加载路线重绘，不搭接。
         this.segmentStatus.prev=null;
 
             if(!isArray(data)){
@@ -515,6 +520,7 @@
             var currPos = [];
             
             if(!this.segmentStatus.prev){
+                
                 this.segmentStatus.prev = node;
                 currPos[7] = node[1];
                 currPos[8] = node[2];
@@ -535,7 +541,8 @@
             
             // 
            // alert(prev.x);
-            //alert(this.relativePos.cx);
+           //  alert(prev.x +" + "+this.relativePos.cx);
+            // alert(prev.y +" + "+this.relativePos.cy);
             ctx.beginPath();
 
             ctx.moveTo(prev.x + this.relativePos.cx, prev.y + this.relativePos.cy);
@@ -578,20 +585,24 @@
         
         //初始化舞台
         initStage:function(){
+ 
             var panelInfo = getElementInfo(this.panel);
             this.stage = createStage();
             this.stageCtx = this.stage.getContext('2d');
 
             this.stage.style.position = 'absolute';
 
-            this.stageSize.width = 10 * (this.configs.size.width === undefined ? panelInfo.width : this.configs.size.width);
-            this.stageSize.height = 10 * (this.configs.size.height === undefined ? panelInfo.height : this.configs.size.height);
-
+            this.stageSize.width =11000;// 10 * (this.configs.size.width === undefined ? panelInfo.width : this.configs.size.width);
+            this.stageSize.height =11000;// 10 * (this.configs.size.height === undefined ? panelInfo.height : this.configs.size.height);
+            //alert(this.stageSize.height);
             this.stage.width = this.stageSize.width;
-            this.stage.height = this.stageSize.height;
+            this.stage.height = this.stageSize.height; 
 
             this.stage.style.left = -(this.stageSize.width - panelInfo.width) / 2 + 'px';
             this.stage.style.top = -(this.stageSize.height - panelInfo.height) / 2 + 'px';
+
+            // alert(this.stageSize.width+" "+panelInfo.width);
+             //alert(this.stageSize.height+" "+panelInfo.height);
 
             this.container.appendChild(this.stage);
 			
@@ -623,12 +634,14 @@
         },
         
         updateDevicePos:function(carId,pos,dire){
-            
+           // alert(pos);
             var offsetX = this.stageSize.width/2;
 			var offsetY = this.stageSize.height/2;
-            
+           
             var wd = this.configs.machine.width/this.configs.rate;
             
+           // alert(pos.x + offsetX - wd/2);
+
             this.deviceList[carId].style.left = (pos.x + offsetX - wd/2) + 'px';
             this.deviceList[carId].style.top = (pos.y + offsetY - this.configs.device.height/2) +'px';
             if(!dire){
@@ -730,10 +743,10 @@
             this.deviceList[carId].style.background = '#000';
             //this.deviceList[carId].style.opacity = '0.4';
             
-            this.deviceList[carId].innerHTML = '<img width="'+
+            this.deviceList[carId].innerHTML = '<div><img width="'+
             this.configs.device.width+'" height="'+
             this.configs.device.height
-            +'" src="'+this.configs.device.src+'" /><div style="padding:5px;position:absolute;top:0;left:0;background:#fff">'+carId
+            +'" src="'+this.configs.device.src+'" /></div><div id="cardiv'+carId+'" style="padding:5px;position:absolute;top:50;left:20;background:#fff">'+carId
             +'</div>';
 
             this.deviceLayer.appendChild(this.deviceList[carId]);
@@ -868,11 +881,10 @@
         //初始化数据
         initData:function(data,carId){
             if(!isArray(data)){
-                throw new Error('数据格式有误');
+              throw new Error('数据格式有误');
             }
 			//this.satelliteData = data.reverse();
-			carId = carId?carId:'car_'+newDate().getTime();
-			
+		 carId = carId?carId:'car_'+newDate().getTime();
 			this.satelliteData[carId] = data.reverse();
 			
 			this.satelliteStat[carId] = {
@@ -891,7 +903,7 @@
 			
             this.addDevice(carId);
             this.updateDeviceInfo();
-            
+           // alert(898);
 			return carId;
         },
 
@@ -1065,6 +1077,7 @@
 
         //清空
         clear:function(){
+        alert("clear");
             this.stageCtx.clearRect(0,0,this.stageSize.width,this.stageSize.height);
         },
 
@@ -1141,9 +1154,10 @@
         fillRect:function(data){
             var ctx = this.stageCtx;
             if(data.fillStyle){
-                ctx.fillStyle = data.fillStyle;
+            ctx.fillStyle = data.fillStyle;
             }
-            ctx.fillRect(data.x,data.y,data.width,data.height);
+           // alert(data.x+" "+data.y+" "+data.width+" "+data.height);
+           ctx.fillRect(data.x,data.y,data.width,data.height);
         },
 		
 		//处理多数据
@@ -1238,52 +1252,43 @@
             
         },
 
-        //获取填充样式
+        //获取填充样式  victor 2016.10.3
         getFillStyle:function(cmv,level){
-       // alert(cmv);
+        
+        // alert(cmv);
+        
+        var hsl ;//= rgbToHsl(color[0],color[1],color[2]);
 
-       if(showCmv==0){
-        if(level>this.configs.colorList.length){level=this.configs.colorList.length-1;}
-            var color = this.configs.colorList[level-1];
-            if(!color){
-                color = this.configs.colorList[0];
-            }
-            var hsl = rgbToHsl(color[0],color[1],color[2]);
-
-            hsl.val[1] = (hsl.val[1] * 100) +'%';
-
-            hsl.val[2] = hsl.val[2]*100 +'%';
-
-            return 'hsl('+hsl.val.join(',')+')'
-            
+         if(showCmv==0){
+                if(level>this.configs.colorList.length){level=this.configs.colorList.length-1;}
+                var color = this.configs.colorList[level-1];
+                if(!color){
+                    color = this.configs.colorList[0];
+                }
+                 hsl = rgbToHsl(color[0],color[1],color[2]);
+    
             }else if(showCmv==1){
             
-            var color = this.configs.cmvcolorList[0];
-            if(cmv>7){
-                color = this.configs.cmvcolorList[1];
-            }
-            var hsl = rgbToHsl(color[0],color[1],color[2]);
-
-            hsl.val[1] = (hsl.val[1] * 100) +'%';
-
-            hsl.val[2] = hsl.val[2]*100 +'%';
-
-            return 'hsl('+hsl.val.join(',')+')'
             
-            
+
+             var ccolor = parseInt( cmv / targetCmv * (this.configs.cmvallcolorList.length-1));
+             if(ccolor>this.configs.cmvallcolorList.length-1){ccolor=this.configs.cmvallcolorList.length-1;}
+             var color = this.configs.cmvallcolorList[ccolor];
+
+                  hsl = rgbToHsl(color[0],color[1],color[2]);
+
              }else if(showCmv==2){
-                var color = this.configs.cmvcolorList[cmv];
-                 
-                var hsl = rgbToHsl(color[0],color[1],color[2]);
 
+                var color = this.configs.cmvcolorList[cmv];
+                hsl = rgbToHsl(color[0],color[1],color[2]);
+
+             }
                 hsl.val[1] = (hsl.val[1] * 100) +'%';
 
                 hsl.val[2] = hsl.val[2]*100 +'%';
 
                 return 'hsl('+hsl.val.join(',')+')'
              
-             
-             }
         },
 		
         //卫星数据
@@ -1302,6 +1307,9 @@
 			
 			//分割任务分别绘制解决卡的问题
             renderList.forEach(function(v,i){
+
+          //  alert(v.x+" "+v.y+" "+v.cmv+"   1311:");
+           
 				that.fillRect({
 					x:v.x,
 					y:v.y,
@@ -1330,7 +1338,7 @@
             if(!datas || !datas.devices){
                 return;
             }
-
+            
             var that = this;
             var offsetX = parseFloat(datas.x);
             var offsetY = parseFloat(datas.y);
@@ -1339,15 +1347,16 @@
             var renderDatas = {};
 
             Object.keys(datas.devices).forEach(function(k){
-                datas.devices[k].points && datas.devices[k].points.forEach(function(v,i){
+           
+             datas.devices[k].points && datas.devices[k].points.forEach(function(v,i){
                     var pos = [];
                     pos[7] = offsetX + parseFloat(v.x);
                     pos[8] = offsetY + parseFloat(v.y);
 
                     var cPos = that.getRelativePos(pos);
-
+                     
                     if(renderDatas[k]){
-                        renderDatas[k].push({
+                     renderDatas[k].push({
                             ax:offsetX + parseFloat(v.x),
                             ay:offsetY + parseFloat(v.y),
                             x:cPos.x + that.relativePos.cx,
@@ -1357,7 +1366,7 @@
                             cmv:parseInt(v.C)
                         });
                  
-                    
+                   /*    */
                     }else{
                         renderDatas[k] = [];
                         renderDatas[k].push({
@@ -1374,6 +1383,11 @@
 
 
                      });
+        
+        
+
+        
+        
             });
 
             return renderDatas;
@@ -1394,7 +1408,10 @@
                 var renderList = renderSet[k];
                 
                 renderList.forEach(function(v,i){
-         //   alert(v.x);
+             
+            //  alert(v.x+" "+v.y+" "+v.cmv+"   1450:"+" "+v.gap);
+           
+
                   //  setTimeout(function(){
                         that.fillRect({
                             x:v.x,
@@ -1406,6 +1423,53 @@
                     //},500)
                     
                 });
+
+
+
+                /****************************移车   victor yang 2016.10.9 ****************************************************************/
+                 
+         var currpos= datas.devices[k].info.split(",");
+           
+           if(carlist.indexOf(k+",")>=0){
+                 //satellite.pushData(currpos, k);
+           }else{
+                carlist=carlist+k+",";
+                satellite.initData(currpos, k);
+             }              
+                     var dpos = [];
+                    dpos[7] = currpos[8];
+                    dpos[8] = currpos[7];
+                    var dcPos = that.getRelativePos(dpos);
+             
+             
+            var wd = that.configs.machine.width/that.configs.rate;
+             
+
+            that.deviceList[k].style.left =(dcPos.x + that.relativePos.cx- wd/2)+"px"; 
+            that.deviceList[k].style.top = (dcPos.y + that.relativePos.cy)+"px"; 
+           
+           //    [0(CMV),1(振动频率),2(遍数),3(时间),4(卫星定位壮态),5(速度),6(高程),7(纬度),8(经度)]
+            var tipcar="N:" + k+
+                        "<br/>CMV:" + currpos[0]+
+                        "<br/>FRE:" + currpos[1]+
+                        "<br/>COU:" + currpos[2]+
+                        "<br/>TIM:" + currpos[3]+
+                        "<br/>STA:" + currpos[4]+
+                         "<br/>ELE:" + currpos[6]+
+               "<br/>LAT:" + currpos[7]+
+               "<br/>LON:" + currpos[8]+
+                       "<br/>SPE:" + currpos[5];
+            $("#cardiv"+k).html(tipcar);
+
+            
+            /***********************************victor yang 2016.10.10 加动态参数*********************************************************/
+           
+
+
+            /********************************************************************************************/
+        
+        
+
             });
             
             
@@ -1425,14 +1489,16 @@
 
             if(this.relativePos.px === 0){
                 this.relativePos.px = parseFloat(curr[7]);
-            }
+             }
             if(this.relativePos.py === 0){
                 this.relativePos.py = parseFloat(curr[8]);
-            }
+             }
 
             this.relativePos.cx = parseFloat(this.stageSize.width) / 2;
             this.relativePos.cy = parseFloat(this.stageSize.height) / 2;
-
+            
+           // alert(this.relativePos.cx);
+           
             var rx = parseFloat(curr[7]) - this.relativePos.px;//相对移动了多少单位:m
             var ry = parseFloat(curr[8]) - this.relativePos.py;//相对移动了多少单位:m
 
@@ -2044,27 +2110,8 @@
 
         },
 
-        //推入新数据
-        pushData : function(data,carId){
-            if(!isArray(data)){
-                return;
-            }
-			if(carId in this.satelliteData){
-				this.satelliteData[carId].unshift(data);
-			}
-        },
+        
 
-        pushDatas:function(datas,carId){
-            if(!isArray(datas) || !carId){
-                return;
-            }
-            datas.reverse();
-            //this.satelliteData = datas.concat(this.satelliteData);
-			if(carId in this.satelliteData){
-				this.satelliteData[carId] = datas.concat(this.satelliteData[carId]);
-			}
-			
-        },
         //更新配置
         config : function(){
 

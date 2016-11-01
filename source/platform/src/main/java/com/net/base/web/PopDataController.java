@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -120,7 +119,6 @@ public class PopDataController {
 	@ResponseBody
 	public Map filterDevData(String taskName,String deviceName,
 			String startTime,String endTime,String beginStNum,String endStNum,HttpServletResponse response){
-		
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("deviceName", deviceName);
 		map.put("startTime", startTime);
@@ -241,68 +239,61 @@ public class PopDataController {
 		return returnMap;
 	}	
 	
-	private static List<Map<String,Object>> alldata=new ArrayList<Map<String,Object>>();
 	//定位数据。
-		@SuppressWarnings("rawtypes")
-		@RequestMapping(value="/selectDevDataNew.do")
-		@ResponseBody
-		public Map selectDevDataNew(String taskIds,String deviceIds,String serverTime){
-			Map<String,Object> returnMap = new HashMap<String,Object>();
-			
-			Map<String, Object> map = new HashMap<String, Object>();
-			map.put("taskIds", taskIds);
-			map.put("deviceIds", deviceIds);
-			map.put("serverTime", serverTime);
-			//同一时刻所有设备的原始数据点（单个原始点）
-			List<Map<String,Object>> positionList = basicDao.queryForList("sc_positiondata.getSinglePositionListNew",map);
-			
-			StringBuffer bf = new StringBuffer();
-			//取得所有设备的原始点的内差点和原始点的下一个点
-			for (int i = 0; i < positionList.size(); i++) {
-				Map<String,Object> dataMap = positionList.get(i);
-				if(i==0){
-					bf.append("{x:\"");
-					bf.append(Integer.valueOf(dataMap.get("X").toString().substring(0,(dataMap.get("X").toString()).indexOf(".")))/1000*1000);
-					bf.append("\",y:\"");
-					bf.append(Integer.valueOf(dataMap.get("Y").toString().substring(0,(dataMap.get("Y").toString()).indexOf(".")))/1000*1000);
-					bf.append("\",devices:{");
-				}
-				//取得原始点的下一个原始点
-				Map<String, Object> params = new HashMap<String, Object>();
-				params.put("taskId", dataMap.get("taskId"));
-				params.put("deviceId", dataMap.get("deviceId"));
-				params.put("positionId", dataMap.get("id"));
-				List<Map<String,Object>> secondPos = basicDao.queryForList("sc_positiondata.getSinglePositionList",params);
-				//求取内差点
-				params.put("precision", 1000);
-				List<Map<String,Object>> neichaList = basicDao.queryForList("sc_facePtData.findPositionNeicha",params);
-				//拼接数据
-				bf.append("\""+dataMap.get("deviceId")+"\":{");
-				bf.append("\"info\":\"");
-				bf.append(dataMap.get("CMV")+","+dataMap.get("frequency")+","+1+","+dataMap.get("satelliteTime")+","+
-						dataMap.get("GPSStatus")+","+dataMap.get("speed")+","+dataMap.get("elevation")+","+dataMap.get("Y")+","+
-						dataMap.get("X")+"\",\"from\":{\"x\":\""+dataMap.get("X")+"\",\"y\":\""+dataMap.get("Y")+"\"}");
-				if (null != secondPos && secondPos.size()>0) {
-					bf.append(",\"to\":{\"x\":\""+secondPos.get(0).get("X")+"\",\"y\":\""+secondPos.get(0).get("Y")+"\"},");
-				}else {
-					bf.append(",\"to\":{\"x\":\""+dataMap.get("X")+"\",\"y\":\""+dataMap.get("Y")+"\"},");
-				}
-				bf.append("\"points\":[");
-				for (int j = 0; j < neichaList.size(); j++) {
-					bf.append("{\"x\":\""+neichaList.get(j).get("X")+"\",\"y\":\""+neichaList.get(j).get("Y")+"\",\"L\":\""+neichaList.get(j).get("times")+"\"}");
-					if((j+1)!=neichaList.size())bf.append(",");
-				}
-				bf.append("]},");
+	@SuppressWarnings("rawtypes")
+	@RequestMapping(value="/selectDevDataNew.do")
+	@ResponseBody
+	public Map selectDevDataNew(String taskIds,String deviceIds,String serverTime){
+		Map<String,Object> returnMap = new HashMap<String,Object>();
+
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("taskIds", taskIds);
+		map.put("deviceIds", deviceIds);
+		map.put("serverTime", serverTime);
+		//同一时刻所有设备的原始数据点（单个原始点）
+		List<Map<String,Object>> positionList = basicDao.queryForList("sc_positiondata.getSinglePositionListNew",map);
+		
+		StringBuffer bf = new StringBuffer();
+		//取得所有设备的原始点的内差点和原始点的下一个点
+		for (int i = 0; i < positionList.size(); i++) {
+			Map<String,Object> dataMap = positionList.get(i);
+			if(i==0){
+				bf.append("{x:\"");
+				bf.append(Integer.valueOf(dataMap.get("X").toString().substring(0,(dataMap.get("X").toString()).indexOf(".")))/1000*1000);
+				bf.append("\",y:\"");
+				bf.append(Integer.valueOf(dataMap.get("Y").toString().substring(0,(dataMap.get("Y").toString()).indexOf(".")))/1000*1000);
+				bf.append("\",devices:{");
 			}
-			bf.append("},}");
-			returnMap.put("data",bf.toString());
-			alldata.add(returnMap);
-			if (serverTime.equals("2016-10-04 21:14:11")) {
-				Map<String, Object> ssMap = new HashMap<String, Object>();
-				ssMap.put("eeeeeee", alldata);
-				return ssMap;
+			//取得原始点的下一个原始点
+			Map<String, Object> params = new HashMap<String, Object>();
+			params.put("taskId", dataMap.get("taskId"));
+			params.put("deviceId", dataMap.get("deviceId"));
+			params.put("positionId", dataMap.get("id"));
+			List<Map<String,Object>> secondPos = basicDao.queryForList("sc_positiondata.getSinglePositionList",params);
+			//求取内差点
+			params.put("precision", 1000);
+			List<Map<String,Object>> neichaList = basicDao.queryForList("sc_facePtData.findPositionNeicha",params);
+			//拼接数据
+			bf.append("\""+dataMap.get("deviceId")+"\":{");
+			bf.append("\"info\":\"");
+			bf.append(dataMap.get("CMV")+","+dataMap.get("frequency")+","+1+","+dataMap.get("satelliteTime")+","+
+			dataMap.get("GPSStatus")+","+dataMap.get("speed")+","+dataMap.get("elevation")+","+dataMap.get("Y")+","+
+			dataMap.get("X")+"\",\"from\":{\"x\":\""+dataMap.get("X")+"\",\"y\":\""+dataMap.get("Y")+"\"}");
+			if (null != secondPos && secondPos.size()>0) {
+				bf.append(",\"to\":{\"x\":\""+secondPos.get(0).get("X")+"\",\"y\":\""+secondPos.get(0).get("Y")+"\"},");
+			}else {
+				bf.append(",\"to\":{\"x\":\""+dataMap.get("X")+"\",\"y\":\""+dataMap.get("Y")+"\"},");
 			}
-			return returnMap;
-		}	
+			bf.append("\"points\":[");
+			for (int j = 0; j < neichaList.size(); j++) {
+				bf.append("{\"x\":\""+neichaList.get(j).get("X")+"\",\"y\":\""+neichaList.get(j).get("Y")+"\",\"L\":\""+neichaList.get(j).get("times")+"\"}");
+				if((j+1)!=neichaList.size())bf.append(",");
+			}
+			bf.append("]},");
+		}
+		bf.append("},}");
+		returnMap.put("data",bf.toString());
+		return returnMap;
+	}	
 	
 }

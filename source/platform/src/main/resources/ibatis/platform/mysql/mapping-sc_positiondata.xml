@@ -299,11 +299,12 @@
 					<isNotEmpty prepend="and" property="serverTime">
 						t.serverTime = #serverTime#
 					</isNotEmpty>	
+				order by serverTime asc
 	</select>
 	
 	<select id="getPositionTimeList" parameterClass="java.util.Map" resultClass="java.util.HashMap">
 	   			select 
-					DATE_FORMAT(t.serverTime, '%Y-%m-%d %H:%i:%s') as serverTime
+					DISTINCT DATE_FORMAT(t.serverTime, '%Y-%m-%d %H:%i:%s') as serverTime
 				from 
 					sc_positiondata t
 				where 1=1

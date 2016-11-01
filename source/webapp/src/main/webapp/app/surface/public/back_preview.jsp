@@ -14,6 +14,7 @@
             padding: 7px 7px;
         }
     </style>
+    
     <script src="<%=request.getContextPath()%>/js/libs/jquery-2.1.1.min.js" type="text/javascript"></script>
 </head>
 <body>
@@ -42,7 +43,7 @@
         					<tr><td>结束桩号:<input type='text' id='endStNum' value='' /></td></tr>
         					<tr><td>开始时间:<input type='text' id='startTime'  class="Wdate" onFocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',maxDate:'#F{$dp.$D(\'endTime\',{d:-2});}'})"/></td></tr>
         					<tr><td>结束时间:<input type='text' id='endTime' class="Wdate" onFocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',minDate:'#F{$dp.$D(\'startTime\',{d:2});}'})"/></td></tr>
-        					<tr><td>回放步长:<input type='text' id='step' value='1000' />毫秒</td></tr>
+        					
         					<tr><td><input type='button' class="btn btn-primary" onclick='selectData()' value='筛选回放' /></td></tr>
         				</table>
         			</div>
@@ -62,16 +63,24 @@
         <input type="button" id="reset" value="重置">
         <input type="button" id="estage" value="扩大舞台大小">
     </div>
+    
+    
+    
+    
+    
     <jsp:include page="/commonJSP/commonjs.jsp"></jsp:include>
+    
     <script src="./js/satellite-renderPointer.js"></script>
-    <!--单车-->
-    <script src="./js/replay.js"></script>
-    <!--多车-->
-    <!-- <script src="./js/replayMult.js" type="text/javascript"></script> -->
+
     <script>
-       // var serverurl = 'http://117.78.49.251:9002/Compaction/';
-        var serverurl = 'http://localhost:8082/base/Compaction/';
+        // window.onerror = function(e){
+        //     alert(JSON.stringify(e));
+        // }
+
+        var serverurl = 'http://117.78.49.251:9002/Compaction/';
+        // var serverurl = 'http://localhost:27395/Compaction/';
         var showCmv = 0;
+
 
         var satellite = new Satellite({
             panel: '#panel',
@@ -93,31 +102,43 @@
                 }
             }
         });
-        var arrayreplay = sateData1.split("$");
-        var ri = 0;
+
+        // satellite.initData(sateData,'device#1');
+         //satellite.initData(sateData1,'device#2');
+        // satellite.initData(sateData2,'device#3');
+
+        //       satellite.initSegmentData([[1000, 4380265.65, 455273.38], [1100, 4380365.65, 455353.38], [1200, 4380465.65, 455473.38], [1300, 4380565.65, 455473.38], [1356, 4380621.65, 455473.38], [1436, 4380701.65, 455573.38]]);
+        //"x":"455475.52","y":"4380566.50"
+        //"x":"455474.40","y":"4380568.10"
+        
+        satellite.initSegmentData([[980, 455475.52, 4380546.50], [1000, 455475.52, 4380566.50], [1100, 455475.52, 4380666.50], [1200, 455475.52, 4380766.50]]);
+
+        //satellite.initSegmentData([[980, 455495.52, 4380546.50], [1000, 455495.52, 4380566.50], [1100, 455495.52, 4380666.50], [1200, 455495.52, 4380766.50]]);
+
         document.getElementById('start').onclick = function () {
-        	var sint = "0";
-            var inter = setInterval(function(){
-				//方法一， 数据文件。
-                ri = ri + 1;
-                try {
-               		 var tmpData = strToJson1(arrayreplay[ri]); // JSON.parse(data); // data; // getData();
-                	 satellite.addRenderList(tmpData);
-                } catch (ex) {}
-            	
-                /* $.ajax({
+        	//satellite.addDevice("device#2");
+            var inter = setInterval(function () {
+                $.ajax({
                     type: 'POST',
-                    url: serverurl+"PopsCacheDatas.do",
+                    // url: "http://localhost:27395/Compaction/PopsCacheDatas", //PopDynamicDatas//117.78.49.251:9002
+                    //url: serverurl+"PopDynamicDatas",
+                    url: "http://localhost:8082/base/Compaction/PopsCacheDatas.do",
                     data: { "deviceIds": "1,2,3,4,5,6" },
                     success: function (data) {
                         try {
-                            var tmpData = strToJson1(data); // JSON.parse(data); 
+                            var tmpData = strToJson1(data); // JSON.parse(data); // data; // getData();
+                            /*  */
                             satellite.addRenderList(tmpData);
-                        } catch (ex) {alert(ex);}
+                            //  satellite.addRenderList(tmpData);
+                        } catch (ex) {
+                            //    alert(ex);
+
+                        }
+
                     },
                     dataType: "json"
-                });*/
-            }, 500) 
+                });
+            }, 500)
         }
 
         document.getElementById('stop').onclick = function () {
@@ -127,6 +148,7 @@
         document.getElementById('enlarge').onclick = function () {
             var scl = satellite.stageStatus.scale + 0.1;
             satellite.scale(scl);
+
         }
 
         document.getElementById('lessen').onclick = function () {
@@ -135,30 +157,46 @@
         }
 
         document.getElementById('reset').onclick = function () {
+            //var scl = satellite.stageStatus.scale * 0.9;
             satellite.scale(1);
         }
 
         document.getElementById('estage').onclick = function () {
-            window.open(window.location);
+            satellite.extendStage(2);
+
         }
+
+
 
         function LoadAllData() {
             showCmv = 1;
+
             var iCount = setInterval(function () {
+
                 $.ajax({
                     type: 'POST',
-                    url: serverurl + "PopFullDatas", //PopFullDatas//PopDynamicDatas
-                    data: { "deviceIds": "1,2,3,4,5,6,7,8" },
+                    url: serverurl+"PopFullDatas", //PopFullDatas//PopDynamicDatas
+                    data: { "deviceIds": "1" },
                     success: function (data) {
                         if (data == 10000) { clearInterval(iCount); }
+
                         try {
                             var tmpData = strToJson1(data); // JSON.parse(data); // data; // getData();
                             satellite.addRenderList(tmpData);
-                        } catch (ex) { }
+                        } catch (ex) {
+                        	
+                        }
+
                     },
                     dataType: "json"
                 });
+
+
             }, 500)
+
+            //  clearInterval(iCount);
+            //  parseInt(str);
+
         }
 
         function LoadAllCountData() {
@@ -166,61 +204,73 @@
             var iCount = setInterval(function () {
                 $.ajax({
                     type: 'POST',
-                    url: serverurl + "PopFullDatas", //PopFullDatas//PopDynamicDatas
-                    data: { "deviceIds": "1,2,3,4,5,6,7,8" },
+                    url: serverurl+"PopFullDatas", //PopFullDatas//PopDynamicDatas
+                    data: { "deviceIds": "1" },
                     success: function (data) {
+
                         if (data == 10000) { clearInterval(iCount); }
+
+
                         try {
                             var tmpData = strToJson1(data); // JSON.parse(data); // data; // getData();
                             satellite.addRenderList(tmpData);
-                        } catch (ex) { }
+                        } catch (ex) {
+                        }
+
                     },
                     dataType: "json"
                 });
+
+
             }, 500)
+
         }
 
         //摘要视图
         function PopAbstractFullDatas() {
+
             showCmv = 2;
             var iCount = setInterval(function () {
                 //string stakestart, string stakeend, string ratecmv, string ratecount
                 $.ajax({
                     type: 'POST',
-                    url: serverurl + "PopAbstractFullDatas", //PopFullDatas//PopDynamicDatas
+                    url: serverurl+"PopAbstractFullDatas", //PopFullDatas//PopDynamicDatas
                     data: { "stakestart": "1000", "stakeend": "1100", "ratecmv": "85", "ratecount": "8" },
                     success: function (data) {
+
                         if (data == 10000) { clearInterval(iCount); }
+
+
                         try {
                             var tmpData = strToJson1(data); // JSON.parse(data); // data; // getData();
                             satellite.addRenderList(tmpData);
-                        } catch (ex) { }
+                        } catch (ex) {
+                        }
+
                     },
                     dataType: "json"
                 });
+
+
             }, 500)
+
         }
 
         function LoadRoadData() {
-            //K26+100  5月11日
-            satellite.initSegmentData([[24686, 455495.52, 4380546.50], [24786, 455495.52, 4380646.50]]);
-            satellite.initSegmentData([[24786, 455495.52, 4380646.50], [25086, 455495.52, 4380946.50]]);
-            // 9.21号 
-            satellite.initSegmentData([[25360, 455514.52, 4381220.50], [25460, 455514.52, 4381320.50], [25560, 455514.52, 4381420.50], [25660, 455514.52, 4381520.50], [26660, 455514.52, 4382520.50]]);
-        }
-
-        function WeakAreaReport() {
             $.ajax({
                 type: 'POST',
-                url: serverurl + "WeakAreaReport",
-                data: { "width": "10", "height": "10" },
+                url: serverurl+"LoadRoadData", //PopFullDatas//PopDynamicDatas
+                data: { "task": "1" },
                 success: function (data) {
                     try {
-                        var tmpData = strToJson1(data);
-                        satellite.addRenderList(tmpData);
+                        var tmpData = strToJson1(data); // JSON.parse(data); // data; // getData();
+                        satellite.initSegmentData(tmpData);
+          //              satellite.addRenderList(tmpData);
                     } catch (ex) {
                         alert(ex);
                     }
+
+
                 },
                 dataType: "json"
             });
@@ -233,11 +283,11 @@
         function strToJson2(str) {
             var json = (new Function("return " + str))();
             return json;
-        }  
+        } 
+        
         
         var startTime;
         var endTime;
-        var step;
         function selectData(){
 			var taskName = $("#taskName").val().replace(/\s/g,'');
 			var deviceName = $("#deviceName").val().replace(/\s/g,'');
@@ -245,23 +295,6 @@
 			var endStNum = $("#endStNum").val().replace(/\s/g,'');
 			var startTimeEmp = $("#startTime").val();
 			var endTimeEmp = $("#endTime").val();
-			step = $("#step").val();
-			if(beginStNum.length>0){
-				if(isNaN(beginStNum)){
-					alert("开始桩号必须是数字!");
-					return false;
-				}
-			}
-			if(endStNum.length>0){
-				if(isNaN(endStNum)){
-					alert("结束桩号必须是数字!");
-					return false;
-				}
-			}
-			if(isNaN(step)){
-				alert("步长必须是数字!");
-				return false;
-			}
 			$.ajax({
 				url : Main.contextPath+"/Compaction/filterDevData.do",
 				type : "post",
@@ -276,11 +309,13 @@
 					$("#deviceUl").html("");
 					$.each(result.deviceList,function(index,map){
 						$("#deviceUl").append("<a href='#' name='0' id='"+map.taskId+"-a-"+map.deviceId+"' style='padding-left:40px;' class='list-group-item' onclick='selectDevData("+map.taskId+","+map.deviceId+")'>"+map.deviceName+"</a>");
+						//初始化设备div信息
+						satellite.addDevice(map.deviceId);
 					});
 				}
 			});
         }
-        //为设备列表做选择的效果
+        
         function selectDevData(taskId,deviceId){
         	if($("#"+taskId+"-a-"+deviceId).attr("name")=='1'){
         		$("#"+taskId+"-a-"+deviceId).css("background-color","#F5F5F5");
@@ -289,7 +324,9 @@
         		$("#"+taskId+"-a-"+deviceId).css("background-color","lightblue");
             	$("#"+taskId+"-a-"+deviceId).attr("name",1);
         	}
+        	
         }
+        
       
         function runData(){
         	var deviceIdArray="";
@@ -302,7 +339,7 @@
         	}
         	if(deviceIdArray.length>1)deviceIdArray=deviceIdArray.substring(1);
         	//获取最近的数据时间点
-        	 $.ajax({
+        	$.ajax({
 				url : Main.contextPath+"/Compaction/getMinTimeData.do",
 				type : "post",
 				async : false,
@@ -310,12 +347,10 @@
 				data:{"taskDeviceArray":deviceIdArray,startTime:startTime,endTime:endTime},
 				success : function(result) {
 					window.parent.existsUser(result);//判断用户是否已失效
-					//时间的升序列表
 					runcarData(deviceIdArray,result.positionTimeList);
 				}
-			}); 
+			});
         }
-        //安装时间的升序，回放数据库的数据
         function runcarData(deviceIdArray,positionTimeList){
         	var deviceList = deviceIdArray.split(",");
         	var deviceIds = "-1";
@@ -330,7 +365,8 @@
         			clearInterval(inter);
         			return false;
         		}
-        		var jsonTime = positionTimeList.shift();//shift是出栈，出头部
+        		var jsonTime = positionTimeList.shift();
+        		
         		$.ajax({
     				url : Main.contextPath+"/Compaction/selectDevDataNew.do",
     				type : "post",
@@ -338,14 +374,14 @@
     				dataType : "json",
     				data:{taskIds:taskIds,deviceIds:deviceIds,serverTime:(jsonTime.serverTime)},
     				success : function(result) {
-    					 try {
+    					/* try {
                             var tmpData = strToJson1(result.data);
                             satellite.addRenderList(tmpData);
                         } catch (ex) {
-                        } 
+                        } */
     				}
     			});
-            }, step);
+            }, 500);
         } 
         
         
