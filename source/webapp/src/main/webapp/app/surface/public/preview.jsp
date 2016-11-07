@@ -262,20 +262,28 @@
 				alert("步长必须是数字!");
 				return false;
 			}
+			var type=0;
+			if(taskName.length==0 && deviceName.length==0 && beginStNum.length==0 && endStNum.length==0){
+				type = 1;
+			}
+			if(startTimeEmp.length==0 || endTimeEmp.length==0){
+				alert("请选择有效的起止时间!");
+				return false;
+			}
 			$.ajax({
 				url : Main.contextPath+"/Compaction/filterDevData.do",
 				type : "post",
 				async : false,
 				dataType : "json",
 				data:{taskName:taskName,deviceName:deviceName,beginStNum:beginStNum,endStNum:endStNum,
-					startTime:startTimeEmp,endTime:endTimeEmp},
+					startTime:startTimeEmp,endTime:endTimeEmp,type:type},
 				success : function(result) {
 					window.parent.existsUser(result);//判断用户是否已失效
 					startTime = result.startTime;
 					endTime = result.endTime;
 					$("#deviceUl").html("");
 					$.each(result.deviceList,function(index,map){
-						$("#deviceUl").append("<a href='#' name='0' id='"+map.taskId+"-a-"+map.deviceId+"' style='padding-left:40px;' class='list-group-item' onclick='selectDevData("+map.taskId+","+map.deviceId+")'>"+map.deviceName+"</a>");
+						$("#deviceUl").append("<a href='#' name='1' id='"+map.taskId+"-a-"+map.deviceId+"' style='padding-left:40px;background-color:lightblue;' class='list-group-item' onclick='selectDevData("+map.taskId+","+map.deviceId+")'>"+map.deviceName+"</a>");
 					});
 				}
 			});
@@ -292,39 +300,36 @@
         }
       
         function runData(){
-        	var deviceIdArray="";
         	var devs = $("#deviceUl").children();
+        	var deviceIds = "-1";
+    		var taskIds = "-1";
         	for(var i=0;i<devs.length;i++){
         		var aa=devs[i];
         		if($(aa).attr("name")=='1'){
-        			deviceIdArray +=","+$(aa).attr("id");
+        			var empMap = $(aa).attr("id");
+        			if(empMap.split("-a-")[0] != '-1'){
+        				taskIds += ","+empMap.split("-a-")[0];
+        			}
+        			deviceIds += ","+empMap.split("-a-")[1];
         		}
         	}
-        	if(deviceIdArray.length>1)deviceIdArray=deviceIdArray.substring(1);
-        	//获取最近的数据时间点
+        	if(taskIds == '-1')taskIds="";
+        	//获取最近的数据时间点,这里在获取一次是为了精确到选择了多少设备的具体数据，这样的时间列表相对更准确些，相对时间段数据更精确
         	 $.ajax({
 				url : Main.contextPath+"/Compaction/getMinTimeData.do",
 				type : "post",
 				async : false,
 				dataType : "json",
-				data:{"taskDeviceArray":deviceIdArray,startTime:startTime,endTime:endTime},
+				data:{taskIds:taskIds,deviceIds:deviceIds,startTime:startTime,endTime:endTime},
 				success : function(result) {
 					window.parent.existsUser(result);//判断用户是否已失效
 					//时间的升序列表
-					runcarData(deviceIdArray,result.positionTimeList);
+					runcarData(deviceIds,taskIds,result.positionTimeList);
 				}
 			}); 
         }
         //安装时间的升序，回放数据库的数据
-        function runcarData(deviceIdArray,positionTimeList){
-        	var deviceList = deviceIdArray.split(",");
-        	var deviceIds = "-1";
-    		var taskIds = "-1";
-        	for (var i = 0; i < deviceList.length; i++) {
-    			var empMap = deviceList[i];
-    			taskIds += ","+empMap.split("-a-")[0];
-    			deviceIds += ","+empMap.split("-a-")[1];
-    		}
+        function runcarData(deviceIds,taskIds,positionTimeList){
         	var inter = setInterval(function () {
         		if(positionTimeList.length<1){
         			clearInterval(inter);
@@ -345,7 +350,7 @@
                         } 
     				}
     			});
-            }, step);
+            }, 1000);
         } 
         
         

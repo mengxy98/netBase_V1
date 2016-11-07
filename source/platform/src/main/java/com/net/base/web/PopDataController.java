@@ -117,7 +117,7 @@ public class PopDataController {
 	@SuppressWarnings("rawtypes")
 	@RequestMapping(value="/filterDevData.do")
 	@ResponseBody
-	public Map filterDevData(String taskName,String deviceName,
+	public Map filterDevData(String taskName,String deviceName,String type,
 			String startTime,String endTime,String beginStNum,String endStNum,HttpServletResponse response){
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("deviceName", deviceName);
@@ -127,8 +127,14 @@ public class PopDataController {
 		map.put("beginStNum", beginStNum);
 		map.put("endStNum", endStNum);
 		//取到设备列表
-		List<Map<String, Object>> deviceList = basicDao.queryForList("deviceManagerment.findTaskDeviceList", map);
-		map.put("deviceList", deviceList);
+		if (type.equals("0")) {
+			List<Map<String, Object>> deviceList = basicDao.queryForList("deviceManagerment.findTaskDeviceList", map);
+			map.put("deviceList", deviceList);
+		}else {
+			List<Map<String, Object>> deviceList = basicDao.queryForList("deviceManagerment.findTaskDeviceListRef", map);
+			map.put("deviceList", deviceList);
+		}
+		
 		/*response.addHeader("Access-Control-Allow-Origin", "*");
 	    response.addHeader("Access-Control-Allow-Methods","GET,POST");
 		response.addHeader("Access-Control-Allow-Headers","Origin, X-Requested-With, Content-Type, Accept");
@@ -143,17 +149,9 @@ public class PopDataController {
 	@SuppressWarnings("rawtypes")
 	@RequestMapping(value="/getMinTimeData.do")
 	@ResponseBody
-	public Map getMinTimeData(String taskDeviceArray,String startTime,String endTime){
+	public Map getMinTimeData(String taskIds,String deviceIds,String startTime,String endTime){
 		//封装参数数据
 		Map<String, Object> param = new HashMap<String, Object>();
-		String deviceIds = "-1";
-		String taskIds = "-1";
-		String[] deviceList = taskDeviceArray.split(",");
-		for (int i = 0; i < deviceList.length; i++) {
-			String empMap = deviceList[i];
-			taskIds += ","+empMap.split("-a-")[0];
-			deviceIds += ","+empMap.split("-a-")[1];
-		}
 		param.put("startTime", startTime);
 		param.put("endTime", endTime);
 		param.put("deviceIds", deviceIds);
@@ -165,6 +163,10 @@ public class PopDataController {
 	}
 	
 	//定位数据。
+	/**
+	 * 
+	 *
+	 */
 	@SuppressWarnings("rawtypes")
 	@RequestMapping(value="/selectDevData.do")
 	@ResponseBody
@@ -296,4 +298,73 @@ public class PopDataController {
 		return returnMap;
 	}	
 	
+	
+	
+	/**
+	 * 2016/11/4 数据接口升级
+	 * @param taskIds
+	 * @param deviceIds
+	 * @param serverTime
+	 * @return
+	 */
+	@SuppressWarnings("rawtypes")
+	@RequestMapping(value="/selectDevDataNew2.do")
+	@ResponseBody
+	public Map selectDevDataNew2(String taskIds,String deviceIds,String startTime,String endTime){
+		Map<String,Object> returnMap = new HashMap<String,Object>();
+
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("taskIds", taskIds);
+		map.put("deviceIds", deviceIds);
+		map.put("startTime", startTime);
+		map.put("endTime", endTime);
+		
+		//从过程数据表里面取出步长内的过程点 rpid,pid,times
+		//List<Map<String,Object>> positionList = basicDao.queryForList("sc_positiondata.getProcessList",map);  
+		
+		//同一时刻所有设备的原始数据点（单个原始点）
+		List<Map<String,Object>> positionList = basicDao.queryForList("sc_positiondata.getSinglePositionListNew",map);
+		
+		StringBuffer bf = new StringBuffer();
+		//取得所有设备的原始点的内差点和原始点的下一个点
+		for (int i = 0; i < positionList.size(); i++) {
+			Map<String,Object> dataMap = positionList.get(i);
+			if(i==0){
+				bf.append("{x:\"");
+				bf.append(Integer.valueOf(dataMap.get("X").toString().substring(0,(dataMap.get("X").toString()).indexOf(".")))/1000*1000);
+				bf.append("\",y:\"");
+				bf.append(Integer.valueOf(dataMap.get("Y").toString().substring(0,(dataMap.get("Y").toString()).indexOf(".")))/1000*1000);
+				bf.append("\",devices:{");
+			}
+			//取得原始点的下一个原始点
+			Map<String, Object> params = new HashMap<String, Object>();
+			params.put("taskId", dataMap.get("taskId"));
+			params.put("deviceId", dataMap.get("deviceId"));
+			params.put("positionId", dataMap.get("id"));
+			List<Map<String,Object>> secondPos = basicDao.queryForList("sc_positiondata.getSinglePositionList",params);
+			//求取内差点
+			params.put("precision", 1000);
+			List<Map<String,Object>> neichaList = basicDao.queryForList("sc_facePtData.findPositionNeicha",params);
+			//拼接数据
+			bf.append("\""+dataMap.get("deviceId")+"\":{");
+			bf.append("\"info\":\"");
+			bf.append(dataMap.get("CMV")+","+dataMap.get("frequency")+","+1+","+dataMap.get("satelliteTime")+","+
+			dataMap.get("GPSStatus")+","+dataMap.get("speed")+","+dataMap.get("elevation")+","+dataMap.get("Y")+","+
+			dataMap.get("X")+"\",\"from\":{\"x\":\""+dataMap.get("X")+"\",\"y\":\""+dataMap.get("Y")+"\"}");
+			if (null != secondPos && secondPos.size()>0) {
+				bf.append(",\"to\":{\"x\":\""+secondPos.get(0).get("X")+"\",\"y\":\""+secondPos.get(0).get("Y")+"\"},");
+			}else {
+				bf.append(",\"to\":{\"x\":\""+dataMap.get("X")+"\",\"y\":\""+dataMap.get("Y")+"\"},");
+			}
+			bf.append("\"points\":[");
+			for (int j = 0; j < neichaList.size(); j++) {
+				bf.append("{\"x\":\""+neichaList.get(j).get("X")+"\",\"y\":\""+neichaList.get(j).get("Y")+"\",\"L\":\""+neichaList.get(j).get("times")+"\"}");
+				if((j+1)!=neichaList.size())bf.append(",");
+			}
+			bf.append("]},");
+		}
+		bf.append("},}");
+		returnMap.put("data",bf.toString());
+		return returnMap;
+	}	
 }

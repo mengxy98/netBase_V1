@@ -75,6 +75,18 @@
 				GROUP BY c.deviceId
 	</select>
 	
+	<select id="findTaskDeviceListRef" parameterClass="java.util.Map" resultClass="java.util.HashMap">
+	  select t1.id as deviceId,t1.deviceName,'-1' as taskId from sc_device t1 where t1.id in (
+			select DISTINCT deviceId from sc_positiondata where 1=1
+				<isNotEmpty prepend="and" property="startTime">
+					serverTime <![CDATA[ > ]]> #startTime#
+				</isNotEmpty>
+				<isNotEmpty prepend="and" property="endTime">
+					serverTime <![CDATA[ < ]]> #endTime#
+				</isNotEmpty>
+		) ORDER BY deviceId asc
+	</select>
+	
 	
 	<select id="getDeviceId" parameterClass="java.util.Map" resultClass="java.lang.Integer">
 	    select  t1.id
@@ -83,6 +95,10 @@
 				<isNotEmpty prepend="and" property="deviceName">
 					t1.deviceName like '%$deviceName$%'
 				</isNotEmpty>
+	</select>
+	
+	<select id="gettaskIdFromRef" parameterClass="java.util.Map" resultClass="java.lang.Integer">
+	    select tid from sc_taskdeviceref where devid=#deviceId# order by allocationTime desc limit 1
 	</select>
 	
 	

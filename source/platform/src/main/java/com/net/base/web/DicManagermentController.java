@@ -110,7 +110,24 @@ public class DicManagermentController {
 		String executeSql = "";
 		if ("0".equals(type)) {
 			String newSQl =sql.substring(7,sql.indexOf("FROM"));
-			executeSql = "SELECT GROUP_CONCAT(CONCAT('[',CONCAT_Ws(',',"+newSQl+"),']')) AS RETURNDATA "+sql.substring(sql.indexOf("FROM"));
+			//过滤a.times,a.times as times,Format('yyyy') as date,tiems的4中情况处理
+			newSQl = newSQl.trim();
+			String[] conds = newSQl.split(",");
+			StringBuilder bl = new StringBuilder();
+			for (int i = 0; i < conds.length; i++) {
+				if (i>0) {
+					bl.append(",");
+				}
+				if (conds[i].indexOf(" as ")>0) {//取as后面的作为查询条件
+					bl.append(conds[i].substring(conds[i].indexOf("as")+1).trim());
+				}else if (conds[i].indexOf(".")>0) {
+					bl.append(conds[i].substring(conds[i].indexOf(".")+1).trim());
+				}else {
+					bl.append(conds[i].trim());
+				}
+			}
+			executeSql = "SELECT GROUP_CONCAT(CONCAT('[',CONCAT_Ws(',',"+bl.toString()+"),']')) AS RETURNDATA from ("
+					+ sql +") tttttt";
 		}else if ("1".equals(type)) {
 			executeSql = sql;
 		}else {

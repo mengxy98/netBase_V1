@@ -323,6 +323,32 @@
 					order by serverTime asc
 	</select>
 	
+	
+	<select id="getProcessList" parameterClass="java.util.Map" resultClass="java.util.HashMap">
+				select t1.*,t2.x,t2.y from 
+					(select t.rpid,t.pid,t.times,t.matchTime,t.deviceId from (
+						select rpid,pid,times,matchTime,deviceId from sc_processrangeptdata 
+						where 1=1
+						<isNotEmpty prepend="and" property="taskIds">
+							taskId in ($taskIds$)
+						</isNotEmpty>
+						<isNotEmpty prepend="and" property="deviceIds">
+							deviceId in ($deviceIds$)
+						</isNotEmpty>
+						<isNotEmpty prepend="and" property="startTime">
+							<isNotEmpty property="endTime">
+								matchTime between #startTime# and #endTime#
+							</isNotEmpty>
+						</isNotEmpty>	
+						order by matchTime desc
+					) t
+						group by t.PId,t.rpid  
+						order by t.matchTime asc
+					) t1
+					join 
+					sc_rangeptdata t2 on t1.rpid=t2.id
+	</select>
+	
 </sqlMap>
 				  
 				  

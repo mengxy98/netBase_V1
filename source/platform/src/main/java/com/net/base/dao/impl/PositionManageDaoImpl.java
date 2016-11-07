@@ -129,13 +129,15 @@ public class PositionManageDaoImpl implements PositionManagerDao {
 			Object keyId = basicDao.queryForObject("sc_positiondata.findMaxId");
 			//插入内插数据  ,xml还带着更新，所以不做批量操作
 			Map<String, Object> param2 = new HashMap<String, Object>();
+			Map<String, Object> param3 = new HashMap<String, Object>();
 			for (int i = 0; i < neichaData.length; i++) {
 				if (neichaData[i].length()>0) {
 					String[] emp = neichaData[i].split(",");
 					try {
 						param2.clear();
 						param2.put("positionId", keyId);
-						param2.put("taskId", originData[0]);
+						param3.put("deviceId", originData[1]);
+						param2.put("taskId",basicDao.queryForObject("deviceManagerment.gettaskIdFromRef",param3));
 						param2.put("deviceId", originData[1]);
 						Double xx = Double.parseDouble(preX)+Double.parseDouble(emp[0]);
 						param2.put("X", xx);
