@@ -114,20 +114,20 @@ public class DicManagermentController {
 			newSQl = newSQl.trim();
 			String[] conds = newSQl.split(",");
 			StringBuilder bl = new StringBuilder();
-			for (int i = 0; i < conds.length; i++) {
+			for (int i = 0; i < conds.length; i++) {//[B.DEVICEID, MAX(A.PID) AS PID, COUNT(A.RPID) AS RPID, B.CMV, B.SATELLITETIME, B.GPSSTATUS, B.SPEED, B.Z, B.Y, B.X, B.FREQUENCY]
 				if (i>0) {
 					bl.append(",");
 				}
-				if (conds[i].indexOf(" as ")>0) {//取as后面的作为查询条件
-					bl.append(conds[i].substring(conds[i].indexOf("as")+1).trim());
+				if (conds[i].indexOf(" AS ")>0) {//取as后面的作为查询条件
+					bl.append(conds[i].substring(conds[i].indexOf("AS")+2).trim());
 				}else if (conds[i].indexOf(".")>0) {
 					bl.append(conds[i].substring(conds[i].indexOf(".")+1).trim());
 				}else {
 					bl.append(conds[i].trim());
 				}
 			}
-			executeSql = "SELECT GROUP_CONCAT(CONCAT('[',CONCAT_Ws(',',"+bl.toString()+"),']')) AS RETURNDATA from ("
-					+ sql +") tttttt";
+			executeSql = "SELECT GROUP_CONCAT(CONCAT('[',CONCAT_Ws(',',"+bl.toString()+"),']')) AS RETURNDATA FROM ("
+					+ sql +") TTTTTT";
 		}else if ("1".equals(type)) {
 			executeSql = sql;
 		}else {

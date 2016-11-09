@@ -42,7 +42,7 @@
         					<tr><td>结束桩号:<input type='text' id='endStNum' value='' /></td></tr>
         					<tr><td>开始时间:<input type='text' id='startTime'  class="Wdate" onFocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',maxDate:'#F{$dp.$D(\'endTime\',{d:-2});}'})"/></td></tr>
         					<tr><td>结束时间:<input type='text' id='endTime' class="Wdate" onFocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',minDate:'#F{$dp.$D(\'startTime\',{d:2});}'})"/></td></tr>
-        					<tr><td>回放步长:<input type='text' id='step' value='1000' />毫秒</td></tr>
+        					<tr><td>回放步长:<input type='text' id='step' value='10' />秒</td></tr>
         					<tr><td><input type='button' class="btn btn-primary" onclick='selectData()' value='筛选回放' /></td></tr>
         				</table>
         			</div>
@@ -330,29 +330,47 @@
         }
         //安装时间的升序，回放数据库的数据
         function runcarData(deviceIds,taskIds,positionTimeList){
+        	var steps = step*1000;
         	var inter = setInterval(function () {
         		if(positionTimeList.length<1){
         			clearInterval(inter);
         			return false;
         		}
-        		var jsonTime = positionTimeList.shift();//shift是出栈，出头部
-        		$.ajax({
-    				url : Main.contextPath+"/Compaction/selectDevDataNew.do",
+        		var startTime = (positionTimeList.shift()).serverTime;//shift是出栈，出头部  list<map>
+        		var startTimeEmp=Date.parse(startTime);
+        		var endTime;//shift是出栈，出头部
+        		var falgkk=true;
+        		while(falgkk){
+        			if(positionTimeList.length>1){
+        				endTime=(positionTimeList.shift()).serverTime;
+    					if((Date.parse(endTime)-startTimeEmp) >= steps){
+    						falgkk = false;//跳出for循环
+    					}	
+        			}else{
+        				endTime=(positionTimeList.shift()).serverTime;
+        				falgkk = false;//跳出for循环
+        			}
+        			
+    			}
+        		 $.ajax({
+    				url : Main.contextPath+"/Compaction/selectDevDataNew2.do",
     				type : "post",
     				async : false,
     				dataType : "json",
-    				data:{taskIds:taskIds,deviceIds:deviceIds,serverTime:(jsonTime.serverTime)},
+    				data:{taskIds:taskIds,deviceIds:deviceIds,startTime:startTime,endTime:endTime},
     				success : function(result) {
-    					 try {
-                            var tmpData = strToJson1(result.data);
-                            satellite.addRenderList(tmpData);
-                        } catch (ex) {
-                        } 
+    					var arrayreplay = result.data.split("$");
+    					for(var k=0;k<arrayreplay.length;k++){
+    						try {
+                                var tmpData = strToJson1(arrayreplay[k]);
+                              //  alert(arrayreplay[k]+"****************"+tmpData);
+                                satellite.addRenderList(tmpData);
+                            } catch (ex) {} 
+    					}
     				}
-    			});
+    			}); 
             }, 1000);
         } 
-        
         
         /* function runcarData(deviceIdArray,positionTimeList){
         	var positionId=0;

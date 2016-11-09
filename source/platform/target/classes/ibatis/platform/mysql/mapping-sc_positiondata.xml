@@ -179,7 +179,7 @@
 	</insert>
 	
 	<select id="findMaxId" resultClass="java.lang.Integer">
-		SELECT max(id) FROM sc_positiondata;
+		SELECT max(id) FROM sc_positiondata
 	</select>
 	
 	<delete id="deleteData" parameterClass="java.lang.String">
@@ -296,9 +296,11 @@
 					<isNotEmpty prepend="and" property="deviceIds">
 						t.deviceId in ($deviceIds$)
 					</isNotEmpty>	
-					<isNotEmpty prepend="and" property="serverTime">
-						t.serverTime = #serverTime#
-					</isNotEmpty>	
+					<isNotEmpty prepend="and" property="startTime">
+						<isNotEmpty property="endTime">
+							t.serverTime between #startTime# and #endTime#
+						</isNotEmpty>
+					</isNotEmpty>
 				order by serverTime asc
 	</select>
 	
@@ -347,6 +349,33 @@
 					) t1
 					join 
 					sc_rangeptdata t2 on t1.rpid=t2.id
+	</select>
+	
+	<select id="getProcessListNew" parameterClass="java.util.Map" resultClass="java.util.HashMap">
+		select pid,GROUP_CONCAT(neicha) as allneicha from (
+			select t1.pid,CONCAT('{x:',FORMAT(t2.x%#precision#,1),',y:',FORMAT(t2.y%#precision#,1),',L:',FORMAT(t1.times,1),'}') as neicha from 
+					(select t.rpid,t.pid,t.times,t.matchTime,t.deviceId from (
+						select rpid,pid,times,matchTime,deviceId from sc_processrangeptdata 
+						where 1=1
+						<isNotEmpty prepend="and" property="taskIds">
+							taskId in ($taskIds$)
+						</isNotEmpty>
+						<isNotEmpty prepend="and" property="deviceIds">
+							deviceId in ($deviceIds$)
+						</isNotEmpty>
+						<isNotEmpty prepend="and" property="startTime">
+							<isNotEmpty property="endTime">
+								matchTime between #startTime# and #endTime#
+							</isNotEmpty>
+						</isNotEmpty>	
+						order by matchTime desc
+					) t
+						group by t.PId,t.rpid  
+						order by t.matchTime asc
+					) t1
+					join 
+					sc_rangeptdata t2 on t1.rpid=t2.id
+) tt group by pid
 	</select>
 	
 </sqlMap>

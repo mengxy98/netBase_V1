@@ -86,4 +86,14 @@ public class BasicDao<T> extends BaseSqlMapClientDaoSupport {
 		return (T) getSqlMapClientTemplate().queryForObject(statementName, obj);
 	}
 
+	public  Map	queryForMap(String statementName, Object parameterObject, String keyProperty) 
+	{
+		return  getSqlMapClientTemplate().queryForMap( statementName, parameterObject, keyProperty);
+	}
+	
+	public  Map	queryForMap(String statementName, Object parameterObject, String keyProperty, String valueProperty) 
+	{
+		return  getSqlMapClientTemplate().queryForMap( statementName, parameterObject, keyProperty,valueProperty);
+	}
+
 }

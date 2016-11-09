@@ -125,8 +125,8 @@ public class PositionManageDaoImpl implements PositionManagerDao {
 					 "F1","F2","F3","temperature","angle","sensor","imageAddress","serverTime"};
 			Map<String, String> param = TransData.transData(originData,column);
 			param.put("isValid", "1");
-			basicDao.insert("sc_positiondata.addData",param);
-			Object keyId = basicDao.queryForObject("sc_positiondata.findMaxId");
+			Object keyId = basicDao.insert("sc_positiondata.addData",param);
+		/*	Object keyId = basicDao.queryForObject("sc_positiondata.findMaxId");*/  //因为有可能是异步的问题获取的id是不准确
 			//插入内插数据  ,xml还带着更新，所以不做批量操作
 			Map<String, Object> param2 = new HashMap<String, Object>();
 			Map<String, Object> param3 = new HashMap<String, Object>();

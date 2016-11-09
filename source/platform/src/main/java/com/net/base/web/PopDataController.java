@@ -318,9 +318,9 @@ public class PopDataController {
 		map.put("deviceIds", deviceIds);
 		map.put("startTime", startTime);
 		map.put("endTime", endTime);
-		
-		//从过程数据表里面取出步长内的过程点 rpid,pid,times
-		//List<Map<String,Object>> positionList = basicDao.queryForList("sc_positiondata.getProcessList",map);  
+		map.put("precision", 1000);
+		//从过程数据表里面取出步长内的过程点 rpid,pid,times  //求取内差点
+		Map neichaMap = basicDao.queryForMap("sc_positiondata.getProcessListNew", map, "pid", "allneicha");  
 		
 		//同一时刻所有设备的原始数据点（单个原始点）
 		List<Map<String,Object>> positionList = basicDao.queryForList("sc_positiondata.getSinglePositionListNew",map);
@@ -329,42 +329,53 @@ public class PopDataController {
 		//取得所有设备的原始点的内差点和原始点的下一个点
 		for (int i = 0; i < positionList.size(); i++) {
 			Map<String,Object> dataMap = positionList.get(i);
-			if(i==0){
-				bf.append("{x:\"");
-				bf.append(Integer.valueOf(dataMap.get("X").toString().substring(0,(dataMap.get("X").toString()).indexOf(".")))/1000*1000);
-				bf.append("\",y:\"");
-				bf.append(Integer.valueOf(dataMap.get("Y").toString().substring(0,(dataMap.get("Y").toString()).indexOf(".")))/1000*1000);
-				bf.append("\",devices:{");
-			}
+			bf.append("{x:");
+			bf.append(Integer.valueOf(dataMap.get("X").toString().substring(0,(dataMap.get("X").toString()).indexOf(".")))/1000*1000);
+			bf.append(",y:");
+			bf.append(Integer.valueOf(dataMap.get("Y").toString().substring(0,(dataMap.get("Y").toString()).indexOf(".")))/1000*1000);
+			bf.append(",devices:{");	
 			//取得原始点的下一个原始点
 			Map<String, Object> params = new HashMap<String, Object>();
 			params.put("taskId", dataMap.get("taskId"));
 			params.put("deviceId", dataMap.get("deviceId"));
 			params.put("positionId", dataMap.get("id"));
 			List<Map<String,Object>> secondPos = basicDao.queryForList("sc_positiondata.getSinglePositionList",params);
-			//求取内差点
-			params.put("precision", 1000);
-			List<Map<String,Object>> neichaList = basicDao.queryForList("sc_facePtData.findPositionNeicha",params);
 			//拼接数据
-			bf.append("\""+dataMap.get("deviceId")+"\":{");
-			bf.append("\"info\":\"");
+			bf.append(dataMap.get("deviceId")+":{");
+			bf.append("info:\'");
 			bf.append(dataMap.get("CMV")+","+dataMap.get("frequency")+","+1+","+dataMap.get("satelliteTime")+","+
 			dataMap.get("GPSStatus")+","+dataMap.get("speed")+","+dataMap.get("elevation")+","+dataMap.get("Y")+","+
-			dataMap.get("X")+"\",\"from\":{\"x\":\""+dataMap.get("X")+"\",\"y\":\""+dataMap.get("Y")+"\"}");
+			dataMap.get("X")+"\',from:{x:"+dataMap.get("X")+",y:"+dataMap.get("Y")+"}");
 			if (null != secondPos && secondPos.size()>0) {
-				bf.append(",\"to\":{\"x\":\""+secondPos.get(0).get("X")+"\",\"y\":\""+secondPos.get(0).get("Y")+"\"},");
+				bf.append(",to:{x:"+secondPos.get(0).get("X")+",y:"+secondPos.get(0).get("Y")+"},");
 			}else {
-				bf.append(",\"to\":{\"x\":\""+dataMap.get("X")+"\",\"y\":\""+dataMap.get("Y")+"\"},");
+				bf.append(",to:{x:"+dataMap.get("X")+",y:"+dataMap.get("Y")+"},");
 			}
-			bf.append("\"points\":[");
-			for (int j = 0; j < neichaList.size(); j++) {
-				bf.append("{\"x\":\""+neichaList.get(j).get("X")+"\",\"y\":\""+neichaList.get(j).get("Y")+"\",\"L\":\""+neichaList.get(j).get("times")+"\"}");
-				if((j+1)!=neichaList.size())bf.append(",");
-			}
-			bf.append("]},");
+			bf.append("points:[");
+			bf.append(neichaMap.get(dataMap.get("id"))==null?"":neichaMap.get(dataMap.get("id")).toString());
+			bf.append("]},},}$");
 		}
-		bf.append("},}");
 		returnMap.put("data",bf.toString());
 		return returnMap;
 	}	
+	
+	/**
+	 * 
+	 * {x:"455000", y:"4381000",devices:
+				{"4":{"info":"044.4,28.4,1,2016/9/29 13:56:47,Nodifferential,2.32,23.737,4381461.66480864,455441.689853588",
+				"from":{"x":"455441.689853588","y":"4381461.66480864"},
+				"to":{"x":"455440.316882673","y":"4381461.36459465"},
+				"points":[{"x":"441.0","y":"463.4","L":"1","C":"44.4"},
+						  {"x":"442.6","y":"462.2","L":"1","C":"44.4"},]},},}
+						  $
+{x:"455000", y:"4381000",devices:
+				{"1":{"info":"006.2,29.8,1,2016/9/21 17:49:35,Nodifferential,2.53,31.028,4381356.32292673,455517.524458034",
+				"from":{"x":"455517.524458034","y":"4381356.32292673"},
+				"to":{"x":"455517.348475072","y":"4381357.36654626"},
+				"points":[{"x":"515.2","y":"357.8","L":"2","C":"6.2"},
+						 {"x":"515.4","y":"357.0","L":"2","C":"6.2"}{"x":"456.0","y":"465.2","L":"1","C":"23"},]},},}
+						 $
+	 * 
+	 * 
+	 */
 }
